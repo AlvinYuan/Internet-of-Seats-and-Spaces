@@ -22,7 +22,8 @@ void setup() {
 void loop() {
   // Determine new state
   int loadSensorValue = analogRead(loadSensorPin);
-  FreeTakenState newChairState = loadSensorValue > loadSensorThreshold ? TAKEN : FREE;
+//  Serial.println(loadSensorValue);
+  FreeTakenState newChairState = loadSensorValue > loadSensorThreshold ? FREE : TAKEN;
   long currentMillis = millis();
 
   // Only do something if the state changes.
