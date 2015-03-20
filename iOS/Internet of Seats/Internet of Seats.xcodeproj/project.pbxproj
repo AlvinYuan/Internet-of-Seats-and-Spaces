@@ -1,0 +1,427 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B65844521ABCC087007DD625 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B65844511ABCC087007DD625 /* main.m */; };
+		B65844551ABCC087007DD625 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B65844541ABCC087007DD625 /* AppDelegate.m */; };
+		B65844581ABCC087007DD625 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B65844571ABCC087007DD625 /* ViewController.m */; };
+		B658445B1ABCC087007DD625 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B65844591ABCC087007DD625 /* Main.storyboard */; };
+		B658445D1ABCC087007DD625 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B658445C1ABCC087007DD625 /* Images.xcassets */; };
+		B65844601ABCC087007DD625 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B658445E1ABCC087007DD625 /* LaunchScreen.xib */; };
+		B658446C1ABCC087007DD625 /* Internet_of_SeatsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B658446B1ABCC087007DD625 /* Internet_of_SeatsTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B65844661ABCC087007DD625 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B65844441ABCC087007DD625 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B658444B1ABCC087007DD625;
+			remoteInfo = "Internet of Seats";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B658444C1ABCC087007DD625 /* Internet of Seats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Internet of Seats.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B65844501ABCC087007DD625 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B65844511ABCC087007DD625 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B65844531ABCC087007DD625 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		B65844541ABCC087007DD625 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		B65844561ABCC087007DD625 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		B65844571ABCC087007DD625 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		B658445A1ABCC087007DD625 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B658445C1ABCC087007DD625 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		B658445F1ABCC087007DD625 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		B65844651ABCC087007DD625 /* Internet of SeatsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Internet of SeatsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B658446A1ABCC087007DD625 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B658446B1ABCC087007DD625 /* Internet_of_SeatsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Internet_of_SeatsTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B65844491ABCC087007DD625 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B65844621ABCC087007DD625 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B65844431ABCC087007DD625 = {
+			isa = PBXGroup;
+			children = (
+				B658444E1ABCC087007DD625 /* Internet of Seats */,
+				B65844681ABCC087007DD625 /* Internet of SeatsTests */,
+				B658444D1ABCC087007DD625 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B658444D1ABCC087007DD625 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B658444C1ABCC087007DD625 /* Internet of Seats.app */,
+				B65844651ABCC087007DD625 /* Internet of SeatsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B658444E1ABCC087007DD625 /* Internet of Seats */ = {
+			isa = PBXGroup;
+			children = (
+				B65844531ABCC087007DD625 /* AppDelegate.h */,
+				B65844541ABCC087007DD625 /* AppDelegate.m */,
+				B65844561ABCC087007DD625 /* ViewController.h */,
+				B65844571ABCC087007DD625 /* ViewController.m */,
+				B65844591ABCC087007DD625 /* Main.storyboard */,
+				B658445C1ABCC087007DD625 /* Images.xcassets */,
+				B658445E1ABCC087007DD625 /* LaunchScreen.xib */,
+				B658444F1ABCC087007DD625 /* Supporting Files */,
+			);
+			path = "Internet of Seats";
+			sourceTree = "<group>";
+		};
+		B658444F1ABCC087007DD625 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B65844501ABCC087007DD625 /* Info.plist */,
+				B65844511ABCC087007DD625 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B65844681ABCC087007DD625 /* Internet of SeatsTests */ = {
+			isa = PBXGroup;
+			children = (
+				B658446B1ABCC087007DD625 /* Internet_of_SeatsTests.m */,
+				B65844691ABCC087007DD625 /* Supporting Files */,
+			);
+			path = "Internet of SeatsTests";
+			sourceTree = "<group>";
+		};
+		B65844691ABCC087007DD625 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B658446A1ABCC087007DD625 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B658444B1ABCC087007DD625 /* Internet of Seats */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B658446F1ABCC087007DD625 /* Build configuration list for PBXNativeTarget "Internet of Seats" */;
+			buildPhases = (
+				B65844481ABCC087007DD625 /* Sources */,
+				B65844491ABCC087007DD625 /* Frameworks */,
+				B658444A1ABCC087007DD625 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Internet of Seats";
+			productName = "Internet of Seats";
+			productReference = B658444C1ABCC087007DD625 /* Internet of Seats.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B65844641ABCC087007DD625 /* Internet of SeatsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B65844721ABCC087007DD625 /* Build configuration list for PBXNativeTarget "Internet of SeatsTests" */;
+			buildPhases = (
+				B65844611ABCC087007DD625 /* Sources */,
+				B65844621ABCC087007DD625 /* Frameworks */,
+				B65844631ABCC087007DD625 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B65844671ABCC087007DD625 /* PBXTargetDependency */,
+			);
+			name = "Internet of SeatsTests";
+			productName = "Internet of SeatsTests";
+			productReference = B65844651ABCC087007DD625 /* Internet of SeatsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B65844441ABCC087007DD625 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				ORGANIZATIONNAME = LaContra;
+				TargetAttributes = {
+					B658444B1ABCC087007DD625 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					B65844641ABCC087007DD625 = {
+						CreatedOnToolsVersion = 6.2;
+						TestTargetID = B658444B1ABCC087007DD625;
+					};
+				};
+			};
+			buildConfigurationList = B65844471ABCC087007DD625 /* Build configuration list for PBXProject "Internet of Seats" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B65844431ABCC087007DD625;
+			productRefGroup = B658444D1ABCC087007DD625 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B658444B1ABCC087007DD625 /* Internet of Seats */,
+				B65844641ABCC087007DD625 /* Internet of SeatsTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B658444A1ABCC087007DD625 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B658445B1ABCC087007DD625 /* Main.storyboard in Resources */,
+				B65844601ABCC087007DD625 /* LaunchScreen.xib in Resources */,
+				B658445D1ABCC087007DD625 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B65844631ABCC087007DD625 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B65844481ABCC087007DD625 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B65844581ABCC087007DD625 /* ViewController.m in Sources */,
+				B65844551ABCC087007DD625 /* AppDelegate.m in Sources */,
+				B65844521ABCC087007DD625 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B65844611ABCC087007DD625 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B658446C1ABCC087007DD625 /* Internet_of_SeatsTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B65844671ABCC087007DD625 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B658444B1ABCC087007DD625 /* Internet of Seats */;
+			targetProxy = B65844661ABCC087007DD625 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B65844591ABCC087007DD625 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B658445A1ABCC087007DD625 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		B658445E1ABCC087007DD625 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B658445F1ABCC087007DD625 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B658446D1ABCC087007DD625 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		B658446E1ABCC087007DD625 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B65844701ABCC087007DD625 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Internet of Seats/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B65844711ABCC087007DD625 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "Internet of Seats/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B65844731ABCC087007DD625 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Internet of SeatsTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Internet of Seats.app/Internet of Seats";
+			};
+			name = Debug;
+		};
+		B65844741ABCC087007DD625 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Internet of SeatsTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Internet of Seats.app/Internet of Seats";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B65844471ABCC087007DD625 /* Build configuration list for PBXProject "Internet of Seats" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B658446D1ABCC087007DD625 /* Debug */,
+				B658446E1ABCC087007DD625 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B658446F1ABCC087007DD625 /* Build configuration list for PBXNativeTarget "Internet of Seats" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B65844701ABCC087007DD625 /* Debug */,
+				B65844711ABCC087007DD625 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		B65844721ABCC087007DD625 /* Build configuration list for PBXNativeTarget "Internet of SeatsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B65844731ABCC087007DD625 /* Debug */,
+				B65844741ABCC087007DD625 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B65844441ABCC087007DD625 /* Project object */;
+}
