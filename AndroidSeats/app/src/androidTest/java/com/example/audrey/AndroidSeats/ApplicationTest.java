@@ -1,4 +1,4 @@
-package com.example.audrey.ios;
+package com.example.audrey.AndroidSeats;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
