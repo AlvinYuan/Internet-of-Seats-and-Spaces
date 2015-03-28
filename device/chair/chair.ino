@@ -1,8 +1,17 @@
 #include <Adafruit_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
-#include <string.h>
-#include "utility/debug.h"
+//#include <string.h>
+//#include "utility/debug.h"
+#include "utility/sntp.h"
+
+/***************************************************************************
+NOTES
+
+This sketch takes up most of the memory available for red boards.
+If you need a little more memory, try commenting out serial print statements.
+Getting more memory may require some serious optimizations or upgrading the hardware.
+***************************************************************************/
 
 // Enums
 enum FreeTakenState {
@@ -26,6 +35,7 @@ const bool USE_CC3000 = true; // if false, use processing_wifi
 Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT,
                                          SPI_CLOCK_DIVIDER); // you can change this clock speed but DI
 
+// Wireless
 #define WLAN_SSID       "CHANGEME"        // cannot be longer than 32 characters!
 #define WLAN_PASS       "CHANGEME"
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
@@ -35,9 +45,14 @@ Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ
                                    // received before closing the connection.  If you know the server
                                    // you're accessing is quick to respond, you can reduce this value.
                                    
-#define ACTIVITY_STREAM_WEBSITE      "russet.ISchool.Berkeley.EDU"
+#define ACTIVITY_STREAM_WEBSITE "russet.ISchool.Berkeley.EDU"
 #define ACTIVITY_STREAM_WEBSITE_PORT 8080
-#define ADAFRUIT_WEBSITE "www.adafruit.com"
+
+// SNTP
+sntp mysntp = sntp(NULL, "time.nist.gov", (short)(-8 * 60), (short)(-7 * 60), true);
+SNTP_Timestamp_t now;
+NetTime_t timeExtract;
+char published[] = "\"2011-02-10T15:04:55Z\"";
 
 // Constants
 const int loadSensorThreshold = 900;
@@ -58,6 +73,9 @@ char *descriptor_tags = "[\"chair\",\"rolling\"]";
 char* latitude = "34.34";
 char* longitude = "-127.23";
 char* altitude = "100.05";
+
+const int contentLengthMaxLength = 3; // XXX: assume 3 digits is enough
+char contentLength[contentLengthMaxLength + 1]; 
 
 void setup() {
   Serial.begin(115200);
@@ -97,7 +115,9 @@ void stateUpdate() {
       verb = "\"checkin\"";
       break;      
   }
-  char* published = "\"2011-02-10T15:04:55Z\""; // TODO: actually determine time
+
+  updatePublishedString();
+
   if (USE_CC3000) {
     postActivityToCC3000(actor, verb, published);
   } else {
@@ -107,7 +127,7 @@ void stateUpdate() {
 
 void postActivityToCC3000(char* actor, char* verb, char* published) {
   // TODO: figure out a cleaner way to specify this? Beware of memory limits
-  int contentLength = 
+  int contentLengthVal = 
     1 + 
     1 + 5 + 2 + strlen(actor) + 
     2 + 4 + 2 + strlen(verb) +
@@ -126,17 +146,15 @@ void postActivityToCC3000(char* actor, char* verb, char* published) {
       1 +
      2 + 9 + 2 + strlen(published) +
      1;
-  String contentLengthString = String(contentLength);
-  int contentLengthCLength = contentLengthString.length() + 1;
-  char contentLengthC[contentLengthCLength];
-  contentLengthString.toCharArray(contentLengthC, contentLengthCLength);
+  updateStringWithValue(contentLength, contentLengthVal, contentLengthMaxLength-1, 0);
+  
   Serial.println(cc3000.checkConnected());
   Adafruit_CC3000_Client www = cc3000.connectTCP(activityStreamServerIp, ACTIVITY_STREAM_WEBSITE_PORT);
   if (www.connected()) {
     www.fastrprint(F("POST /activities HTTP/1.1\r\n"));
     www.fastrprint(F("Host: ")); www.fastrprint(F(ACTIVITY_STREAM_WEBSITE)); www.fastrprint(F("\r\n"));
     www.fastrprint(F("Content-Type: application/stream+json\r\n"));
-    www.fastrprint(F("Content-Length: ")); www.fastrprint(contentLengthC); www.fastrprint(F("\r\n"));
+    www.fastrprint(F("Content-Length: ")); www.fastrprint(contentLength); www.fastrprint(F("\r\n"));
     www.fastrprint(F("\r\n"));
     // Activity JSON
     www.fastrprint(F("{"));
@@ -200,6 +218,24 @@ void postActivityToSerial(char* actor, char* verb, char* published) {
   Serial.println();
 }
 
+void updatePublishedString() {
+    mysntp.ExtractNTPTime(mysntp.NTPGetTime(&now, true), &timeExtract);
+    updateStringWithValue(published, timeExtract.year, 4, 1);
+    updateStringWithValue(published, timeExtract.mon + 1, 7, 6);
+    updateStringWithValue(published, timeExtract.mday, 10, 9);
+    updateStringWithValue(published, timeExtract.hour, 13, 12);
+    updateStringWithValue(published, timeExtract.min, 16, 15);
+    updateStringWithValue(published, timeExtract.sec, 19, 18);
+}
+
+// start and end index inclusive.
+// start >= end
+void updateStringWithValue(char* str, int value, int start_index, int end_index) {
+    for (int i =start_index; i >= end_index; i--) {
+      str[i] = '0' + (value % 10);
+      value = value / 10;
+    }
+}
 /***************************************************************************
     initializeConnection
 
@@ -213,18 +249,16 @@ void initializeConnection() {
   Serial.println(F("\nInitializing CC3000..."));
   if (!cc3000.begin())
   {
-    Serial.println(F("Couldn't begin()! Check your wiring?"));
+//    Serial.println(F("Couldn't begin()! Check your wiring?"));
     while(1);
   }
     
   Serial.print(F("\nAttempting to connect to ")); Serial.println(WLAN_SSID);
   if (!cc3000.connectToAP(WLAN_SSID, WLAN_PASS, WLAN_SECURITY)) {
-    Serial.println(F("Failed!"));
+//    Serial.println(F("Failed!"));
     while(1);
   }
    
-  Serial.println(F("Connected!"));
-  
   /* Wait for DHCP to complete */
   Serial.println(F("Request DHCP"));
   while (!cc3000.checkDHCP())
@@ -238,129 +272,20 @@ void initializeConnection() {
   }
 
   // Try looking up the website's IP address
-  Serial.print(ACTIVITY_STREAM_WEBSITE); Serial.print(F(" -> "));
+//  Serial.print(ACTIVITY_STREAM_WEBSITE); Serial.print(F(" -> "));
   while (activityStreamServerIp == 0) {
     if (! cc3000.getHostByName(ACTIVITY_STREAM_WEBSITE, &activityStreamServerIp)) {
-      Serial.println(F("Couldn't resolve!"));
+//      Serial.println(F("Couldn't resolve!"));
     }
     delay(500);
   }
-  cc3000.printIPdotsRev(activityStreamServerIp);
-  Serial.println();
+//  cc3000.printIPdotsRev(activityStreamServerIp);
+//  Serial.println();
   
-  testConnect();
-
-}
-
-void testConnect() {
-  // Try looking up adafruit IP address
-  Serial.print(ADAFRUIT_WEBSITE); Serial.print(F(" -> "));
-  while (adafruitIp == 0) {
-    if (! cc3000.getHostByName(ADAFRUIT_WEBSITE, &adafruitIp)) {
-      Serial.println(F("Couldn't resolve!"));
-    }
-    delay(500);
-  }
-
-  cc3000.printIPdotsRev(adafruitIp);
-  Serial.println();
-
-  /* Try connecting to the website.
-     Note: HTTP/1.1 protocol is used to keep the server from closing the connection before all data is read.
-  */
-  Adafruit_CC3000_Client www = cc3000.connectTCP(adafruitIp, 80);
-  if (www.connected()) {
-    www.fastrprint(F("GET "));
-    www.fastrprint("/testwifi/index.html");
-    www.fastrprint(F(" HTTP/1.1\r\n"));
-    www.fastrprint(F("Host: ")); www.fastrprint(ADAFRUIT_WEBSITE); www.fastrprint(F("\r\n"));
-    www.fastrprint(F("\r\n"));
-    www.println();
-  } else {
-    Serial.println(F("Connection failed"));    
-    return;
-  }
-
-  /* Read data until either the connection is closed, or the idle timeout is reached. */ 
-  unsigned long lastRead = millis();
-  int count = 0;
-  while (www.connected() && (millis() - lastRead < IDLE_TIMEOUT_MS)) {
-    while (www.available()) {
-      char c = www.read();
-      Serial.print(c);
-      count = count + 1;
-      lastRead = millis();
-    }
-  }
-  www.close();
-  Serial.println(count);
-}
-
-/**************************************************************************/
-/*!
-    @brief  Displays the driver mode (tiny of normal), and the buffer
-            size if tiny mode is not being used
-
-    @note   The buffer size and driver mode are defined in cc3000_common.h
-*/
-/**************************************************************************/
-void displayDriverMode(void)
-{
-  #ifdef CC3000_TINY_DRIVER
-    Serial.println(F("CC3000 is configure in 'Tiny' mode"));
-  #else
-    Serial.print(F("RX Buffer : "));
-    Serial.print(CC3000_RX_BUFFER_SIZE);
-    Serial.println(F(" bytes"));
-    Serial.print(F("TX Buffer : "));
-    Serial.print(CC3000_TX_BUFFER_SIZE);
-    Serial.println(F(" bytes"));
-  #endif
-}
-
-/**************************************************************************/
-/*!
-    @brief  Tries to read the CC3000's internal firmware patch ID
-*/
-/**************************************************************************/
-uint16_t checkFirmwareVersion(void)
-{
-  uint8_t major, minor;
-  uint16_t version;
-  
-#ifndef CC3000_TINY_DRIVER  
-  if(!cc3000.getFirmwareVersion(&major, &minor))
+//  Serial.println(F("UpdateNTPTime"));
+  if (mysntp.UpdateNTPTime())
   {
-    Serial.println(F("Unable to retrieve the firmware version!\r\n"));
-    version = 0;
-  }
-  else
-  {
-    Serial.print(F("Firmware V. : "));
-    Serial.print(major); Serial.print(F(".")); Serial.println(minor);
-    version = major; version <<= 8; version |= minor;
-  }
-#endif
-  return version;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Tries to read the 6-byte MAC address of the CC3000 module
-*/
-/**************************************************************************/
-void displayMACAddress(void)
-{
-  uint8_t macAddress[6];
-  
-  if(!cc3000.getMacAddress(macAddress))
-  {
-    Serial.println(F("Unable to retrieve MAC Address!\r\n"));
-  }
-  else
-  {
-    Serial.print(F("MAC Address : "));
-    cc3000.printHex((byte*)&macAddress, 6);
+    Serial.println(F("Local time synced."));
   }
 }
 
@@ -376,17 +301,17 @@ bool displayConnectionDetails(void)
   
   if(!cc3000.getIPAddress(&ipAddress, &netmask, &gateway, &dhcpserv, &dnsserv))
   {
-    Serial.println(F("Unable to retrieve the IP Address!\r\n"));
+//    Serial.println(F("Unable to retrieve the IP Address!\r\n"));
     return false;
   }
   else
   {
-    Serial.print(F("\nIP Addr: ")); cc3000.printIPdotsRev(ipAddress);
-    Serial.print(F("\nNetmask: ")); cc3000.printIPdotsRev(netmask);
-    Serial.print(F("\nGateway: ")); cc3000.printIPdotsRev(gateway);
-    Serial.print(F("\nDHCPsrv: ")); cc3000.printIPdotsRev(dhcpserv);
-    Serial.print(F("\nDNSserv: ")); cc3000.printIPdotsRev(dnsserv);
-    Serial.println();
+//    Serial.print(F("\nIP Addr: ")); cc3000.printIPdotsRev(ipAddress);
+//    Serial.print(F("\nNetmask: ")); cc3000.printIPdotsRev(netmask);
+//    Serial.print(F("\nGateway: ")); cc3000.printIPdotsRev(gateway);
+//    Serial.print(F("\nDHCPsrv: ")); cc3000.printIPdotsRev(dhcpserv);
+//    Serial.print(F("\nDNSserv: ")); cc3000.printIPdotsRev(dnsserv);
+//    Serial.println();
     return true;
   }
 }
