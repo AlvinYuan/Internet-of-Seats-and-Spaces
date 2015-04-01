@@ -9,4 +9,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^new_request/', reservations.views.new_request, name='new_request'),
+    url(r'^create_subscriber/', reservations.views.create_subscriber, name='create_subscriber')
 )
