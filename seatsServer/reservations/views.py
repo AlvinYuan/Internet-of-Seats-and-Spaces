@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from datetime import datetime
 from django.contrib.sites.models import Site
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponse
 import json
 import requests
 
@@ -52,7 +52,7 @@ def create_subscriber(response):
 	r = requests.get(subscribe_url)
 	users = r.json()
 	if subscriber_id in users["userIDs"]:
-		return HttpResponse("\""subscriber_id + "\" is already subscribed to " = ASBase_url)
+		return HttpResponse('"' + subscriber_id + '" is already subscribed to ' + ASBase_url)
 	else:
 		subscriber = {}
 		subscriber["subscriberID"] = subscriber_id
