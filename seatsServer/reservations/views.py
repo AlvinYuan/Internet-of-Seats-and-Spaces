@@ -14,8 +14,10 @@ subscription_actor_text = "South Hall"
 
 # Create your views here.
 def new_request(response):
+	print "blah"
+	print response.body
 	if response.method == "POST":
-		activity_json = json.loads(request.body)
+		activity_json = json.loads(response.body)
 		print json.dumps(activity_json)
 		# Reject activity if it is not a request
 		if activity_json["verb"] != "request":
@@ -45,8 +47,8 @@ def create_subscriber(response):
 	users = r.json()
 	if subscriber_id in users["userIDs"]:
 		# Code to clean up stale subscribers
-		r = requests.delete (subscribe_url + "/" + subscriber_id)
-		print r.content
+		# r = requests.delete (subscribe_url + "/" + subscriber_id)
+		# print r.content
 		return HttpResponse('"' + subscriber_id + '" is already subscribed to ' + ASBase_url)
 	else:
 		subscriber = {}
