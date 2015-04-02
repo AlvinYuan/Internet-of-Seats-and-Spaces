@@ -65,7 +65,7 @@ DATABASES = {
     }
 }
 # Heroku
-# DATABASES['default'] =  dj_database_url.config()
+DATABASES['default'] =  dj_database_url.config()
 
 
 # Internationalization
@@ -102,3 +102,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+# https://docs.djangoproject.com/en/dev/ref/contrib/sites/#enabling-the-sites-framework
+SITE_ID = 1
