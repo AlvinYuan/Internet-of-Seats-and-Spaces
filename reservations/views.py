@@ -2,6 +2,7 @@ from django.shortcuts import render
 from datetime import datetime
 from django.contrib.sites.models import Site
 from django.http import HttpResponseBadRequest, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 
@@ -13,6 +14,7 @@ subscription_id = "South Hall Requests"
 subscription_actor_text = "South Hall"
 
 # Create your views here.
+@csrf_exempt
 def new_request(response):
 	print "blah"
 	print response.body
