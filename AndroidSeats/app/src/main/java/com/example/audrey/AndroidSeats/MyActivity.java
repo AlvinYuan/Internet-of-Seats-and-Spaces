@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -42,9 +43,19 @@ public class MyActivity extends ActionBarActivity implements OnClickListener {
         //Create JSONObject
         JSONObject jsonParam = new JSONObject();
         try{
-            jsonParam.put("actor", "Audrey's Awesome Android App");
-            jsonParam.put("verb", "kVerbPost");
-            jsonParam.put("id", "chairID");
+            jsonParam.put("actor", "Audrey's Awesome Android App")
+            .put("verb", "request")
+            .put("object", new JSONObject()
+                .put("objectType", "place")
+                .put("id", "http://example.org/berkeley/southhall/202/chair/1")
+                .put("displayName", "Chair at 202 South Hall, UC Berkeley")
+                .put("position", new JSONObject()
+                    .put("latitude", 34.34)
+                    .put("longitude", -127.23)
+                    .put("altitude", 100.05)))
+            .put("descriptor-tags", new JSONArray()
+                .put("chair")
+                .put("rolling"));
         } catch (Exception e) {
             Log.d("error","Err1 message");
         }
