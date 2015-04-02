@@ -8,7 +8,7 @@ import requests
 ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "ISchool Seating Reservation System"
-subscriber_url = Site.objects.all()[0].domain + "/new_request"
+subscriber_url = "http://" + Site.objects.all()[0].domain + "/new_request"
 subscription_id = "South Hall Requests"
 subscription_actor_text = "South Hall"
 
@@ -44,12 +44,16 @@ def create_subscriber(response):
 	r = requests.get(subscribe_url)
 	users = r.json()
 	if subscriber_id in users["userIDs"]:
+		# Code to clean up stale subscribers
+		r = requests.delete (subscribe_url + "/" + subscriber_id)
+		print r.content
 		return HttpResponse('"' + subscriber_id + '" is already subscribed to ' + ASBase_url)
 	else:
 		subscriber = {}
 		subscriber["userID"] = subscriber_id
-		subscriber["channel"] = {"type": "URL_callback", "data": subscriber_url}
+		subscriber["channels"] = [{"type": "URL_Callback", "data": subscriber_url}]
 
+		print json.dumps(subscriber)
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscribe_url, data=json.dumps(subscriber), headers=headers)
 		return HttpResponse(r.content)
@@ -69,7 +73,7 @@ def create_reservation_subscription(response):
 		subscription["userID"] = subscriber_id
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
-		subscription["ASTemplate"]["actor.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
 		subscription["ASTemplate"]["verb"] = { "$in": ["request"] }
 
 		headers = {'Content-Type': 'application/json'}
