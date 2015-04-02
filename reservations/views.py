@@ -8,7 +8,7 @@ import requests
 ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "ISchool Seating Reservation System"
-subscriber_url = "http://" + Site.objects.all()[0].domain + "/new_request"
+subscriber_url = "http://" + Site.objects.all()[0].domain + "/new_request/"
 subscription_id = "South Hall Requests"
 subscription_actor_text = "South Hall"
 
