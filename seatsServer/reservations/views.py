@@ -9,42 +9,34 @@ ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "ISchool Seating Reservation System"
 subscriber_url = Site.objects.all()[0].domain + "/new_request"
+subscription_id = "South Hall Requests"
+subscription_actor_text = "South Hall"
 
 # Create your views here.
 def new_request(response):
 	if response.method == "POST":
 		activity_json = json.loads(request.body)
-		print str(activity_json)
+		print json.dumps(activity_json)
 		# Reject activity if it is not a request
 		if activity_json["verb"] != "request":
 			return HttpResponseBadRequest("<h1>Bad Request</h1><p>Input was not a request activity.</p>")
 
 		# Reject activity if it is not under our management
-		# TODO: how to generalize this?
-		# Maybe all objects need to include South Hall in name?
-		if activity_json["object"]["displayName"] != "Chair at 202 South Hall, UC Berkeley":
+		if subscription_actor_text not in activity_json["object"]["displayName"]:
 			return HttpResponseBadRequest("<h1>Bad Request</h1><p>Requested object is not managed by us.</p>")
 
 		activity_response = {}
-		activity_response["actor"] = self_object = {"displayName": subscriber_id, "id": subscriber_url}
+		activity_response["actor"] = {"displayName": subscriber_id, "id": subscriber_url}
 		activity_response["verb"] = "deny"
 		activity_response["reason"] = "Your request has been noted, but these seats are not reservable."
 		activity_response["object"] = activity_json
 		activity_response["published"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-		# post activity_response asJson to russet.ischool.berkeley.edu:8080
-	else:
-		# WORKING HERE.
-		# Test with get requests. Try posting to ASBase using requests library
-		activity_response = {}
-		activity_response["actor"] = self_object = {"displayName": subscriber_id, "id": subscriber_url}
-		activity_response["verb"] = "deny"
-		activity_response["reason"] = "Your request has been noted, but these seats are not reservable."
-		activity_response["object"] = None
-		activity_response["published"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-		print json.dumps(activity_response)
+
 		headers = {'Content-Type': 'application/stream+json'}
-		r = requests.post("/activities/", data=json.dumps(activity_response), headers=headers)
+		r = requests.post(ASBase_url + "/activities/", data=json.dumps(activity_response), headers=headers)
 		print r.content
+		return HttpResponse(r.content)
+	else:
 		return HttpResponseBadRequest("<h1>Bad Request</h1><p>The server only supports POSTs.</p>")
 
 def create_subscriber(response):
@@ -60,4 +52,26 @@ def create_subscriber(response):
 
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscribe_url, data=json.dumps(subscriber), headers=headers)
+		return HttpResponse(r.content)
+
+def create_reservation_subscription(response):
+	subscription_url = ASBase_url + "/users/" + subscriber_id + "/subscriptions"
+	r = requests.get(subscription_url) # requests takes care of encoding
+	subscriptions = r.json()
+	print json.dumps(subscriptions)
+	if subscription_id in subscriptions["subscriptionIDs"]:
+		# Code to clean up stale subscriptions
+		# r = requests.delete (subscription_url + "/" + subscription_id)
+		# print r.content
+		return HttpResponse('"' + subscription_id + '" subscription already exists')
+	else:
+		subscription = {}
+		subscription["userID"] = subscriber_id
+		subscription["subscriptionID"] = subscription_id
+		subscription["ASTemplate"] = {}
+		subscription["ASTemplate"]["actor.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+		subscription["ASTemplate"]["verb"] = { "$in": ["request"] }
+
+		headers = {'Content-Type': 'application/json'}
+		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
 		return HttpResponse(r.content)
