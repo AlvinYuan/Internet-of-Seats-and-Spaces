@@ -55,7 +55,7 @@ def create_subscriber(response):
 		return HttpResponse('"' + subscriber_id + '" is already subscribed to ' + ASBase_url)
 	else:
 		subscriber = {}
-		subscriber["subscriberID"] = subscriber_id
+		subscriber["userID"] = subscriber_id
 		subscriber["channel"] = {"type": "URL_callback", "data": subscriber_url}
 
 		headers = {'Content-Type': 'application/json'}
