@@ -9,8 +9,8 @@ import requests
 ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "Seating Reservation Result Notification System"
-subscriber_url = "http://" + Site.objects.all()[0].domain + "/reserversion_result/"
-# subscriber_url = "http://serene-wave-9290.herokuapp.com/reserversion_result/"
+subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
+# subscriber_url = "http://serene-wave-9290.herokuapp.com/reservation_result/"
 subscription_id_deny = "DeniedReservationSubscription"
 subscription_id_approve = "ApprovedReservationSubscription"
 subscription_actor_text = "Reserversion Result"
@@ -50,7 +50,7 @@ def create_phone_notifications_subscriber(response):
 	users = r.json()
 	if subscriber_id in users["userIDs"]:
 		# Code to clean up stale subscribers
-		r = requests.delete (subscribe_url + "/" + subscriber_id)
+		# r = requests.delete (subscribe_url + "/" + subscriber_id)
 		return HttpResponse('"' + subscriber_id + '" is already subscribed to ' + ASBase_url)
 	else:
 		subscriber = {}
