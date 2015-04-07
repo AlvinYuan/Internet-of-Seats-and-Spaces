@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^schema-documentation/', reservations.views.documentation, name='documentation'),
     url(r'^new_request/', reservations.views.new_request, name='new_request'),
     url(r'^create_subscriber/', reservations.views.create_subscriber, name='create_subscriber'),
     url(r'^create_reservation_subscription/', reservations.views.create_reservation_subscription, name='create_reservation_subscription'),

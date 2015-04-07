@@ -83,3 +83,6 @@ def create_reservation_subscription(response):
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
 		return HttpResponse(r.content)
+
+def documentation(response):
+	return HttpResponse("Not ready yet!")
