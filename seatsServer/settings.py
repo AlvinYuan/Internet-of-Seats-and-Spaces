@@ -109,7 +109,7 @@ SITE_ID = 1
 
 # Push notifications certificate location
 PUSH_NOTIFICATIONS_SETTINGS = {
-        "APNS_CERTIFICATE": os.path.join(BASE_DIR, 'iotseats_ck.pem'),
+        "APNS_CERTIFICATE": os.path.join(BASE_DIR, 'resources' ,'iotseats_ck.pem'),
 }
 
 SOUTH_MIGRATION_MODULES = {"push_notifications": "push_notifications.south_migrations"}
