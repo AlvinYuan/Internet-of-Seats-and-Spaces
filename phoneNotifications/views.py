@@ -11,7 +11,7 @@ ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 # subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
-subscriber_url = "http://serene-wave-9290.herokuapp.com/reservation_result/"
+# subscriber_url = "http://serene-wave-9290.herokuapp.com/reservation_result/"
 subscription_id_deny = "DeniedReservationSubscription"
 subscription_id_approve = "ApprovedReservationSubscription"
 subscription_actor_text = "Reserversion Result"
