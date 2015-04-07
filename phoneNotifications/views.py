@@ -20,19 +20,25 @@ subscription_actor_text = "Reserversion Result"
 @csrf_exempt
 def register_device(response):
 	response_json = {}
+	print 'in_register_device'
 
 	# if response.method == "POST":
 	device_json = json.loads(response.body)
 	device_token = device_json["device_token"]
 	system = device_json['system']
 
-
-	if device_token == "":	
+	print '====device info====='
+	print device_token
+	print system
+	print '====device info end====='
+	if device_token == "":
+		print 'device token is empty'
 		# Didn't get device token
 		response_json['message'] = 'The server did not receive device token'
 		return HttpResponseBadRequest(json.dumps(response_json))
 
 	try:
+		print 'try to find object in db'
 		# This device is already registered.
 		if system == 'iOS':
 			device = APNSDevice.objects.get(registration_id=device_token)
@@ -40,16 +46,19 @@ def register_device(response):
 			device = GCMDevice.objects.get(registration_id=device_token)
 		device.delete()
 
+		print 'delete object in db'
 		response_json['message'] = 'This device is already registered.'
 
 		return HttpResponse(json.dumps(response_json), content_type="application/json")
 	except APNSDevice.DoesNotExist:
+		print 'object not exist'
 		# This device is successfully registered.
 		if system == 'iOS':
 			device = APNSDevice.objects.create(registration_id=device_token)
 		else:
 			device = GCMDevice.objects.create(registration_id=device_token)
 
+		print 'create object in db'
 		response_json['message'] = 'This device is successfully registered.'
 		return HttpResponse(json.dumps(response_json), content_type="application/json")
 
