@@ -9,9 +9,9 @@ import requests
 
 ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
-subscriber_id = "Seating Reservation Result Notification System"
+# subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
-# subscriber_url = "http://serene-wave-9290.herokuapp.com/reservation_result/"
+subscriber_url = "http://serene-wave-9290.herokuapp.com/reservation_result/"
 subscription_id_deny = "DeniedReservationSubscription"
 subscription_id_approve = "ApprovedReservationSubscription"
 subscription_actor_text = "Reserversion Result"
@@ -19,32 +19,43 @@ subscription_actor_text = "Reserversion Result"
 
 @csrf_exempt
 def register_device(response):
-	print response.body
-	if response.method == "POST":
-		device_json = json.loads(response.body)
-		print json.dumps(device_json)
+	response_json = {}
 
-		device_token = device_json["device_token"]
-		# apns_token = '4aed6b088ae45079d9788e692af58446c9a14efb80190a936050aa0cbbd458f9'
+	# if response.method == "POST":
+	device_json = json.loads(response.body)
+	device_token = device_json["device_token"]
+	system = device_json['system']
 
-		if device_token == "":	
-			# TODO: bad request content
-			return HttpResponseBadRequest("<h1>Bad Request</h1><p>Requested object is not managed by us.</p>")
 
-		try:
+	if device_token == "":	
+		# Didn't get device token
+		response_json['message'] = 'The server did not receive device token'
+		return HttpResponseBadRequest(json.dumps(response_json))
+
+	try:
+		# This device is already registered.
+		if system == 'iOS':
 			device = APNSDevice.objects.get(registration_id=device_token)
-			# TOOD: request content: already registered
-		except APNSDevice.DoesNotExist:
-			device = APNSDevice.objects.create(name='Pi-Tan-iPhone', registration_id=device_token)
-			# TOOD: request content: successfully registered
+		else:
+			device = GCMDevice.objects.get(registration_id=device_token)
+		device.delete()
 
-		# headers = {'Content-Type': 'application/stream+json'}
-		# r = requests.post(ASBase_url + "/activities/", data=json.dumps(activity_response), headers=headers)
-		# print r.content
-		# return HttpResponse(r.content)
-	else:
-		# TODO: make it json 
-		return HttpResponseBadRequest("<h1>Bad Request</h1><p>The server only supports POSTs.</p>")
+		response_json['message'] = 'This device is already registered.'
+
+		return HttpResponse(json.dumps(response_json), content_type="application/json")
+	except APNSDevice.DoesNotExist:
+		# This device is successfully registered.
+		if system == 'iOS':
+			device = APNSDevice.objects.create(registration_id=device_token)
+		else:
+			device = GCMDevice.objects.create(registration_id=device_token)
+
+		response_json['message'] = 'This device is successfully registered.'
+		return HttpResponse(json.dumps(response_json), content_type="application/json")
+
+	# else:
+	# 	response_json['message'] = 'Bad Request: The server only supports POSTs.'
+	# 	return HttpResponseBadRequest(json.dumps(response_json))
 
 # TODO: 
 # 1. create a specific extra field for device(for sending notifiction)
