@@ -16,6 +16,17 @@ subscription_id_deny = "DeniedReservationSubscription"
 subscription_id_approve = "ApprovedReservationSubscription"
 subscription_actor_text = "Reserversion Result"
 
+@csrf_exempt
+def test_ios(response):
+	print "test_ios"
+	print response.body
+
+	#activity_json = json.loads(response.body)
+
+	# response_json = {}
+	# response_json['message'] = 'OK'
+	return HttpResponse("Text only, please.", content_type="text/plain")
+	
 
 @csrf_exempt
 def register_device(response):

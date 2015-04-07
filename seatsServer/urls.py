@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^create_subscriber/', reservations.views.create_subscriber, name='create_subscriber'),
     url(r'^create_reservation_subscription/', reservations.views.create_reservation_subscription, name='create_reservation_subscription'),
 
+    url(r'^test_ios/', phoneNotifications.views.test_ios, name='test_ios'),
     url(r'^register_device/', phoneNotifications.views.register_device, name='register_device'),
     url(r'^reservation_result/', phoneNotifications.views.reservation_result, name='reservation_result'),
     url(r'^create_phone_notifications_subscriber/', phoneNotifications.views.create_phone_notifications_subscriber, name='create_phone_notifications_subscriber'),
