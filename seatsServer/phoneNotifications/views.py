@@ -1,0 +1,227 @@
+from django.shortcuts import render
+from datetime import datetime
+from django.contrib.sites.models import Site
+from django.http import HttpResponseBadRequest, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from push_notifications.models import APNSDevice, GCMDevice
+import json
+import requests
+
+ASBase_url = "http://russet.ischool.berkeley.edu:8080"
+
+subscriber_id = "Seating Reservation Result Notification System"
+subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
+subscription_id_deny = "DeniedReservationSubscription"
+subscription_id_approve = "ApprovedReservationSubscription"
+subscription_actor_text = "Reserversion Result"
+
+@csrf_exempt
+def register_device(response):
+	response_json = {}
+	print 'in_register_device'
+
+	if response.method == "POST":
+		device_json = json.loads(response.body)
+		device_token = device_json["device_token"]
+		system = device_json['system']
+
+		print '====device info====='
+		print device_token
+		print system
+		print '====device info end====='
+
+		# TODO: error result: error code or status
+		if device_token == "":
+			print 'device token is not specified'
+			# Didn't get device token
+			response_json['message'] = 'The server did not receive device token'
+			return HttpResponse(json.dumps(response_json), content_type="application/json")
+
+		try:
+			print 'try to find object in db'
+			# This device is already registered.
+			if system == 'iOS':
+				device = APNSDevice.objects.get(registration_id=device_token)
+			else:
+				device = GCMDevice.objects.get(registration_id=device_token)
+			device.delete()
+
+			print 'delete object in db'
+			response_json['message'] = 'This device is already registered.'
+
+			return HttpResponse(json.dumps(response_json), content_type="application/json")
+		except APNSDevice.DoesNotExist:
+			print 'object not exist'
+			# This device is successfully registered.
+			if system == 'iOS':
+				device = APNSDevice.objects.create(registration_id=device_token)
+			else:
+				device = GCMDevice.objects.create(registration_id=device_token)
+
+			print 'create object in db'
+			response_json['message'] = 'This device is successfully registered.'
+			return HttpResponse(json.dumps(response_json), content_type="application/json")
+	else:
+		response_json['message'] = 'Bad Request: The server only supports POSTs.'
+		return HttpResponseBadRequest(json.dumps(response_json), content_type="application/json")
+
+# TODO: 
+# 2. add the field to new_request response to specify the device
+@csrf_exempt
+def reservation_result(response):
+	response_json = {}
+	print 'in_reservation_result'
+	
+	if response.method == "POST":
+		device_json = json.loads(response.body)
+		device_token = device_json["device_id"]
+		system = device_json['system']
+		seat = device_json['seat_id']
+		result = device_json['reservation_result']
+
+		print '====device info====='
+		print device_id
+		print system
+		print seat
+		print result
+		print '====device info end====='
+
+		# TODO: error result: error code or status
+		if device_id == "":
+			print 'device id is not specified'
+			# Didn't get device token
+			response_json['message'] = 'The server did not specify device id'
+			return HttpResponse(json.dumps(response_json), content_type="application/json")
+
+		try:
+			print 'try to match device in db'
+			# This device is already registered.
+			if system == 'iOS':
+				device = APNSDevice.objects.get(id=device_id)
+
+				# Alert message may only be sent as text.
+				device.send_message("The seat reservation for " + seat + " is " + result)
+				device.send_message(None, badge=5) # No alerts but with badge.
+				device.send_message(None, badge=1, extra={"foo": "bar"}) # Silent message with badge and added custom data.
+			else:
+				device = GCMDevice.objects.get(id=device_id)
+				# The first argument will be sent as "message" to the intent extras Bundle
+				# Retrieve it with intent.getExtras().getString("message")
+				# Alert message may only be sent as text.
+				device.send_message("The seat reservation for " + seat + " is " + result)
+
+				# If you want to customize, send an extra dict and a None message.
+				# the extras dict will be mapped into the intent extras Bundle.
+				# For dicts where all values are keys this will be sent as url parameters,
+				# but for more complex nested collections the extras dict will be sent via
+				# the bulk message api.
+				device.send_message(None, extra={"foo": "bar"})
+			
+			print 'successfully sent push notification'
+			response_json['message'] = 'The server successfully sent push notification to devices.'
+			return HttpResponse(json.dumps(response_json), content_type="application/json")
+		
+		# TODO: error result: error code or status
+		except APNSDevice.DoesNotExist:
+			print 'device not found'
+			response_json['message'] = 'This device is not registered.'
+			return HttpResponse(json.dumps(response_json), content_type="application/json")
+	else:
+		response_json['message'] = 'Bad Request: The server only supports POSTs.'
+		return HttpResponseBadRequest(json.dumps(response_json), content_type="application/json")
+
+
+def create_phone_notifications_subscriber(response):
+	subscribe_url = ASBase_url + "/users"
+	r = requests.get(subscribe_url)
+	users = r.json()
+	if subscriber_id in users["userIDs"]:
+		# Code to clean up stale subscribers
+		# r = requests.delete (subscribe_url + "/" + subscriber_id)
+		return HttpResponse('"' + subscriber_id + '" is already subscribed to ' + ASBase_url)
+	else:
+		subscriber = {}
+		subscriber["userID"] = subscriber_id
+		subscriber["channels"] = [{"type": "URL_Callback", "data": subscriber_url}]
+
+		headers = {'Content-Type': 'application/json'}
+		r = requests.post (subscribe_url, data=json.dumps(subscriber), headers=headers)
+		return HttpResponse(r.content)
+
+def create_deny_reservation_subscription(response):
+	# create_subscription_by_verb(response, 'deny', subscription_id_deny)
+	verb = 'deny'
+	subscription_id = subscription_id_deny
+
+	subscription_url = ASBase_url + "/users/" + subscriber_id + "/subscriptions"
+	r = requests.get(subscription_url) # requests takes care of encoding
+	subscriptions = r.json()
+	print json.dumps(subscriptions)
+
+	if subscription_id in subscriptions["subscriptionIDs"]:
+		# Code to clean up stale subscriptions
+		# r = requests.delete (subscription_url + "/" + subscription_id)
+		# print r.content
+		return HttpResponse('"' + subscription_id + '" subscription already exists')
+	else:
+		subscription = {}
+		subscription["userID"] = subscriber_id
+		subscription["subscriptionID"] = subscription_id
+		subscription["ASTemplate"] = {}
+		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
+
+		headers = {'Content-Type': 'application/json'}
+		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
+		return HttpResponse(r.content)
+
+def create_approve_reservation_subscription(response):
+	# create_subscription_by_verb(response, 'approve', subscription_id_approve)
+
+	verb = 'approve'
+	subscription_id = subscription_id_approve
+
+	subscription_url = ASBase_url + "/users/" + subscriber_id + "/subscriptions"
+	r = requests.get(subscription_url) # requests takes care of encoding
+	subscriptions = r.json()
+	print json.dumps(subscriptions)
+
+	if subscription_id in subscriptions["subscriptionIDs"]:
+		# Code to clean up stale subscriptions
+		# r = requests.delete (subscription_url + "/" + subscription_id)
+		# print r.content
+		return HttpResponse('"' + subscription_id + '" subscription already exists')
+	else:
+		subscription = {}
+		subscription["userID"] = subscriber_id
+		subscription["subscriptionID"] = subscription_id
+		subscription["ASTemplate"] = {}
+		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
+
+		headers = {'Content-Type': 'application/json'}
+		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
+		return HttpResponse(r.content)
+
+# def create_subscription_by_verb(response, verb, subscription_id):
+# 	subscription_url = ASBase_url + "/users/" + subscriber_id + "/subscriptions"
+# 	r = requests.get(subscription_url) # requests takes care of encoding
+# 	subscriptions = r.json()
+# 	print json.dumps(subscriptions)
+
+# 	if subscription_id in subscriptions["subscriptionIDs"]:
+# 		# Code to clean up stale subscriptions
+# 		# r = requests.delete (subscription_url + "/" + subscription_id)
+# 		# print r.content
+# 		return HttpResponse('"' + subscription_id + '" subscription already exists')
+# 	else:
+# 		subscription = {}
+# 		subscription["userID"] = subscriber_id
+# 		subscription["subscriptionID"] = subscription_id
+# 		subscription["ASTemplate"] = {}
+# 		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+# 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
+
+# 		headers = {'Content-Type': 'application/json'}
+# 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
+# 		return HttpResponse(r.content)
