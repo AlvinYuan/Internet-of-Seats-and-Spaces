@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'push_notifications',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -105,3 +106,10 @@ STATICFILES_DIRS = (
 
 # https://docs.djangoproject.com/en/dev/ref/contrib/sites/#enabling-the-sites-framework
 SITE_ID = 1
+
+# Push notifications certificate location
+PUSH_NOTIFICATIONS_SETTINGS = {
+        "APNS_CERTIFICATE": os.path.join(BASE_DIR, 'resources' ,'iotseats_ck.pem'),
+}
+
+SOUTH_MIGRATION_MODULES = {"push_notifications": "push_notifications.south_migrations"}
