@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render_to_response
 from datetime import datetime
 from django.contrib.sites.models import Site
 from django.http import HttpResponseBadRequest, HttpResponse
@@ -85,4 +85,4 @@ def create_reservation_subscription(response):
 		return HttpResponse(r.content)
 
 def documentation(response):
-	return HttpResponse("Not ready yet!")
+	return render_to_response('documentation.html', {})
