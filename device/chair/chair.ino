@@ -73,6 +73,8 @@ char *descriptor_tags = "[\"chair\",\"rolling\"]";
 char* latitude = "34.34";
 char* longitude = "-127.23";
 char* altitude = "100.05";
+char* locality = "Berkeley";
+char* region = "CA";
 
 const int contentLengthMaxLength = 3; // XXX: assume 3 digits is enough
 char contentLength[contentLengthMaxLength + 1]; 
@@ -143,8 +145,14 @@ void postActivityToCC3000(char* actor, char* verb, char* published) {
         2 + 9 + 2 + strlen(longitude) +
         2 + 8 + 2 + strlen(altitude) +
         1 +
+      2 + 7 + 2 +
+        1 +
+        1 + 8 + 2 + strlen(locality) +
+        2 + 6 + 2 + strlen(region) +
+        1 +
       1 +
      2 + 9 + 2 + strlen(published) +
+     2 + 8 + 2 + 1 + 1 + 11 + 2 + 15 + 1 +
      1;
   updateStringWithValue(contentLength, contentLengthVal, contentLengthMaxLength-1, 0);
   
@@ -173,8 +181,14 @@ void postActivityToCC3000(char* actor, char* verb, char* published) {
         www.fastrprint(F(",\"longitude\":")); www.fastrprint(longitude);
         www.fastrprint(F(",\"altitude\":")); www.fastrprint(altitude);
         www.fastrprint(F("}"));
+      www.fastrprint(F(",\"address\":"));
+        www.fastrprint(F("{"));
+        www.fastrprint(F("\"locality\":")); www.fastrprint(locality);
+        www.fastrprint(F(",\"region\":")); www.fastrprint(region);
+        www.fastrprint(F("}"));
       www.fastrprint(F("}"));
     www.fastrprint(F(",\"published\":")); www.fastrprint(published);
+    www.fastrprint(F(",\"provider\":{\"displayName\":\"BerkeleyChair\"}"));
     www.fastrprint(F("}"));
     www.println();
 
