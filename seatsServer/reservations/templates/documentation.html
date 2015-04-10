@@ -1,12 +1,269 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Page Title</title>
+  <title>Documentation</title>
+  <style>
+    h3 {
+      display: inline-block;
+      margin: 0;
+    }
+    li {
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>This is a Heading</h1>
-  <p>This is a paragraph.</p>
+  <h1>Internet of Seats and Spaces Documentation</h1>
+  <p>
+    This document describes the vocabulary used in the Internet of Seats and Spaces project.
+  </p>
+
+  <h2>Verbs</h2>
+
+  <h3 id="checkin">checkin</h3> <span> and </span> <h3 id="leave">leave</h3>
+  <p>
+    Indicates that the actor has entered/occupied or left/vacated the object (place).
+    Depending on the sensing capabilities, the actor may or may not be known.
+    If the actor is not known, a placeholder actor may be used.
+    This activity is generally produced by the object (place) detecting a status change and not by the actor.
+    <code>
+      <pre>
+{
+ "actor": {
+   "displayName": "Unknown",
+   "objectType": "person"
+ },
+ "verb": "checkin",
+ "published": "2015-01-06T15:04:55.000Z",
+ "object": {
+   "objectType": "place",
+   "id": "http://example.org/berkeley/southhall/202/chair/1"
+   "displayName": "Chair at 202 South Hall, UC Berkeley",
+   "position": {
+     "latitude": 34.34,
+     "longitude": -127.23,
+     "altitude": 100.05
+   },
+   "descriptor-tags": [
+     "chair",
+     "rolling"
+   ]
+ }
+}
+      </pre>
+    </code>
+  </p>
+
+
+  <h3 id="request">request</h3>
+  <p>
+    Indicates that the actor has requested the object (place).
+    A specified time frame may be specified along with the request via object properties startTime and endTime.
+    <code>
+      <pre>
+{
+ "actor": {
+   "displayName": "Student Name",
+   "objectType": "person"
+ },
+ "verb": "request",
+ "startTime": "2015-01-06T15:04:55.000Z",
+ "endTime": "2015-01-06T15:04:55.000Z",
+ "object": {
+   "objectType": "place",
+   "id": "http://example.org/berkeley/southhall/202/chair/1"
+   "displayName": "Chair at 202 South Hall, UC Berkeley",
+   "position": {
+     "latitude": 34.34,
+     "longitude": -127.23,
+     "altitude": 100.05
+   },
+   "descriptor-tags": [
+     "chair",
+     "rolling"
+   ]
+ }
+}
+      </pre>
+    </code>
+  </p>
+
+
+  <h3 id="cancel">cancel</h3>
+  <p>
+    Indicates that the actor has canceled his/her own request.
+    The actor should match the actor of the request.
+    <code>
+      <pre>
+{
+ "actor": {
+   "displayName": "Student Name",
+   "objectType": "person"
+ },
+ "verb": "cancel",
+ "object": {
+   "actor": {
+     "objectType": "person",
+     "displayName": "Student Name"
+   },
+   "verb": "request",
+   "object": {
+     "objectType": "place",
+     "id": "http://example.org/berkeley/southhall/202/chair/1"
+     "displayName": "Chair at 202 South Hall, UC Berkeley",
+     "position": {
+       "latitude": 34.34,
+       "longitude": -127.23,
+       "altitude": 100.05
+     },
+     "descriptor-tags": [
+       "chair",
+       "rolling"
+     ]
+   },
+   "startTime": "2015-01-05T17:33:40.000Z",
+   "endTime:": "2015-01-05T19:33:40.000Z",
+ }
+}
+      </pre>
+    </code>
+  </p>
+
+
+  <h3 id="approve">approve</h3> <span> and </span> <h3 id="deny">deny</h3>
+  <p>
+    Indicates that the actor has approved or denied the request.
+    The actor is generally some system or admin which manages requests for the requested place.
+    For deny activities, a reason may optionally be provided as an object property.
+    <code>
+      <pre>
+{
+ "actor": {
+   "displayName": "Administrator",
+   "objectType": "person"
+ },
+ "verb": "deny",
+ "object": {
+   "actor": {
+     "objectType": "person",
+     "displayName": "Student Name"
+   },
+   "verb": "request",
+   "object": {
+     "objectType": "place",
+     "id": "http://example.org/berkeley/southhall/202/chair/1"
+     "displayName": "Chair at 202 South Hall, UC Berkeley",
+     "position": {
+       "latitude": 34.34,
+       "longitude": -127.23,
+       "altitude": 100.05
+     },
+     "descriptor-tags": [
+       "chair",
+       "rolling"
+     ]
+   },
+   "startTime": "2015-01-05T17:33:40.000Z",
+   "endTime:": "2015-01-05T19:33:40.000Z",
+ },
+ "published": "2015-01-06T15:04:55.000Z"
+ "reason": "It's a holiday."
+}
+      </pre>
+    </code>
+  </p>
+
+  <h2>Object Types</h2>
+
+  <h3 id="place">place</h3>
+  <p>
+    Represents a physical location.
+    This may be tied to a physical object (chair), a physical space (room), and/or a geographic location (latitude,longitude).
+    If the place represents a physical object or space, it should have a displayName property that gives the place some meaningful name.
+    It may optionally also have a descriptor-tags property that provides additional description.
+    It may optionally also have a position property that describes the place's current location when the activity is published.
+    This is not required to stay constant.
+    <code>
+      <pre>
+"object": {
+  "objectType": "place",
+  "id": "http://example.org/berkeley/southhall/202/chair/1"
+  "displayName": "Chair at 202 South Hall, UC Berkeley",
+  "position": {
+    "latitude": 34.34,
+    "longitude": -127.23,
+    "altitude": 100.05
+  },
+  "descriptor-tags": [
+    "chair",
+    "rolling"
+  ]
+}
+      </pre>
+    </code>
+  </p>
+
+  <h3 id="activity">activity</h3>
+  <p>
+    Represents an activity. This will be the (implicit) object type for requests.
+    When used as the object (for a cancel, approve, or deny activity), the request activity object should exactly match a previously published request activity.
+    See the request documentation for an example.
+  </p>
+
+  <h2>Object Properties</h2>
+
+  <p>
+    See the examples above for examples of how the following properties are used.
+  </p>
+
+  <h3 id="position">position</h3>
+  <ul>
+    <li id="leave">latitude</li>
+    <li id="leave">longitude</li>
+    <li id="altitude">altitude</li>
+  </ul>
+  <p>
+    These properties are fully described in the documentation for
+    <a href="https://github.com/activitystreams/activity-schema/blob/master/activity-schema.md">ASBase</a>.
+  </p>
+
+
+  <h3 id="displayName">displayName</h3>
+  <p>
+    A human-readable name that describes the object (place).
+    This does not need to be unique if multiple places are considered the same (ex: multiple chairs in the same room).
+    <br>
+    This property has the type String and only has well-defined meaning for objects of the following types: Place
+  </p>
+
+
+  <h3 id="startTime">startTime</h3> <span> and </span> <h3 id="endTime">endTime</h3>
+  <p>
+    A time that represents the beginning and end of the request.
+    Generally both properties should be specified, but this is not required in all contexts.
+    In many contexts, it may be appropriate to assume that a missing startTime implies as soon as possible, and a missing endTime implies as soon as finished.
+    <br>
+    This property has the type String in the format %Y-%m-%dT%H:%M:%SZ (matching the format of the published property) and only has well-defined meaning for objects of the following types: Activity (verb: request)
+ </p>
+
+
+  <h3 id="descriptor-tags">descriptor-tags</h3>
+  <p>
+    A list of descriptors that detail the object's (place) properties.
+    Generally, the descriptors should be short and modular.
+    <br>
+    This property has the type JSON Array, consists of Strings, and only has well-defined meaning for objects of the following types: Place
+  </p>
+
+
+  <h3 id="reason">reason</h3>
+  <p>
+    A human-readable explanation of the action (deny).
+    <br>
+    This property has the type String and only has well-defined meaning for objects of the following types: Activity (verb: deny)
+  </p>
+
 </body>
 
 </html>
