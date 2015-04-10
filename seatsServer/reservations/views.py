@@ -8,6 +8,7 @@ import requests
 
 ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
+provider = {"displayName":"BerkeleyChair"}
 subscriber_id = "ISchool Seating Reservation System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/new_request/"
 subscription_id = "South Hall Requests"
@@ -35,6 +36,7 @@ def new_request(response):
 		activity_response["reason"] = "Your request has been noted, but these seats are not reservable."
 		activity_response["object"] = activity_json
 		activity_response["published"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+		activity_response["provider"] = provider
 
 		headers = {'Content-Type': 'application/stream+json'}
 		r = requests.post(ASBase_url + "/activities/", data=json.dumps(activity_response), headers=headers)
@@ -86,3 +88,31 @@ def create_reservation_subscription(response):
 
 def documentation(response):
 	return render_to_response('documentation.html', {})
+
+# For simulation/testing
+verb = "leave"
+def post_chair_update(response):
+	global verb
+	if verb == "leave":
+		verb = "checkin"
+	else:
+		verb = "leave"
+	activity = {}
+	activity["actor"] = {"displayName": "Unknown", "objectType": "person"}
+	activity["verb"] = verb
+	activity["object"] = {
+	"displayName": "Chair at 202 South Hall, UC Berkeley",
+	"objectType": "place",
+	"descriptor-tags": ["chair", "rolling"],
+	"address": {
+		"locality": "Berkeley",
+		"region": "CA",
+		}
+	}
+	activity["published"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+	activity["provider"] = provider
+
+	headers = {'Content-Type': 'application/stream+json'}
+	r = requests.post(ASBase_url + "/activities/", data=json.dumps(activity), headers=headers)
+	print r.content
+	return HttpResponse(r.content)
