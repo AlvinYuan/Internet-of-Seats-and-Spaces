@@ -1,8 +1,9 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from datetime import datetime
 from django.contrib.sites.models import Site
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from .forms import ChairUpdateForm
 import json
 import requests
 
@@ -16,11 +17,9 @@ subscription_actor_text = "South Hall"
 
 # Create your views here.
 @csrf_exempt
-def new_request(response):
-	print "blah"
-	print response.body
-	if response.method == "POST":
-		activity_json = json.loads(response.body)
+def new_request(request):
+	if request.method == "POST":
+		activity_json = json.loads(request.body)
 		print json.dumps(activity_json)
 		# Reject activity if it is not a request
 		if activity_json["verb"] != "request":
@@ -45,7 +44,7 @@ def new_request(response):
 	else:
 		return HttpResponseBadRequest("<h1>Bad Request</h1><p>The server only supports POSTs.</p>")
 
-def create_subscriber(response):
+def create_subscriber(request):
 	subscribe_url = ASBase_url + "/users"
 	r = requests.get(subscribe_url)
 	users = r.json()
@@ -64,7 +63,7 @@ def create_subscriber(response):
 		r = requests.post (subscribe_url, data=json.dumps(subscriber), headers=headers)
 		return HttpResponse(r.content)
 
-def create_reservation_subscription(response):
+def create_reservation_subscription(request):
 	subscription_url = ASBase_url + "/users/" + subscriber_id + "/subscriptions"
 	r = requests.get(subscription_url) # requests takes care of encoding
 	subscriptions = r.json()
@@ -86,33 +85,35 @@ def create_reservation_subscription(response):
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
 		return HttpResponse(r.content)
 
-def documentation(response):
+def documentation(request):
 	return render_to_response('documentation.html', {})
 
 # For simulation/testing
-verb = "leave"
-def post_chair_update(response):
-	global verb
-	if verb == "leave":
-		verb = "checkin"
+def post_chair_update(request):
+	if request.method == "GET":
+		return render(request, "post_chair_update.html", {"form": ChairUpdateForm() })
 	else:
-		verb = "leave"
-	activity = {}
-	activity["actor"] = {"displayName": "Unknown", "objectType": "person"}
-	activity["verb"] = verb
-	activity["object"] = {
-	"displayName": "Chair at 202 South Hall, UC Berkeley",
-	"objectType": "place",
-	"descriptor-tags": ["chair", "rolling"],
-	"address": {
-		"locality": "Berkeley",
-		"region": "CA",
-		}
-	}
-	activity["published"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-	activity["provider"] = provider
+		form = ChairUpdateForm(request.POST)
+		if form.is_valid():
+			activity = {}
+			activity["actor"] = {"displayName": form.cleaned_data["actor_displayName"], "objectType": "person"}
+			activity["verb"] = form.cleaned_data["verb"]
+			activity["object"] = {
+			"displayName": form.cleaned_data["object_displayName"],
+			"id": form.cleaned_data["object_id"],
+			"objectType": "place",
+			"descriptor-tags": form.cleaned_data["object_descriptor_tags"].split(","),
+			"address": {
+				"locality": "Berkeley",
+				"region": "CA",
+				}
+			}
+			activity["published"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+			activity["provider"] = provider
 
-	headers = {'Content-Type': 'application/stream+json'}
-	r = requests.post(ASBase_url + "/activities/", data=json.dumps(activity), headers=headers)
-	print r.content
-	return HttpResponse(r.content)
+			headers = {'Content-Type': 'application/stream+json'}
+			r = requests.post(ASBase_url + "/activities/", data=json.dumps(activity), headers=headers)
+			print r.content
+			return HttpResponse(r.content)
+		else:
+			return render(request, "post_chair_update.html", {"form": form})

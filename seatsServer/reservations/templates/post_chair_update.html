@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Post Chair Update</title>
+</head>
+<body>
+	<p>
+		You can simulate real chair updates using this form.
+	</p>
+	<form method="post">
+    	{% csrf_token %}
+    	{{ form.as_p }}
+    	<input type="submit" value="Submit" />
+	</form>
+</body>
+</html>
