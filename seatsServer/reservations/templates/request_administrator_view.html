@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<title>Request Administrator View</title>
+	<script>
+		var request_ids = []
+		{% for r in requests %}
+			request_ids.push("{{ r.id }}")
+		{% endfor %}
+
+		$(function() {
+			$(".approve-deny").on("click", function() {
+				verb = this.id.split('-')[0]
+				index = this.id.split('-')[1]
+				document.location.replace('/request/' + verb + '/' +
+				'?request_id=' + encodeURIComponent(request_ids[index]) +
+				'&reason=' + encodeURIComponent($('#reason-'+index).val()))
+			})
+		})
+	</script>
+</head>
+<body>
+	<h1>
+		Request Administrator View
+	</h1>
+	<table>
+		<tr>
+			<th>Status</th>
+			<th>Requestor</th>
+			<th>Start Time</th>
+			<th>End Time</th>
+			<th>Action</th>
+			<th>Reason</th>
+		</tr>
+		{% for r in requests %}
+		<tr>
+			<td>{{ r.status }}</td>
+			<td>{{ r.actor.displayName }}</td>
+			<td>{{ r.startTime }}</td>
+			<td>{{ r.endTime }}</td>
+			<td>
+			{% if r.status == "open" %}
+				<button class="approve-deny" id="approve-{{ forloop.counter0 }}">Approve</button>
+				<button class="approve-deny" id="deny-{{ forloop.counter0 }}">Deny</button>
+			{% endif %}
+			</td>
+			<td>
+			{% if r.status == "open" %}
+				<input type="text" id="reason-{{ forloop.counter0 }}" value="{{ r.reason }}"></td>
+			{% else %}
+				<span>{{ r.reason }}
+			{% endif %}
+		</tr>
+		{% endfor %}
+	</table>
+
+</body>
+</html>
