@@ -85,7 +85,7 @@ This property has the type ``JSON Object`` and only has well-defined meaning for
 
 The latitude of this point on Earth according to the WGS-84 coordinate reference system in decimal degrees (e.g. 27.9881, -3.12676).
 
-This property has the type ``Floating point Number`` and only has well-defined meaning for objects of the following types: Place
+This property has the type ``Floating point Number`` and only has well-defined meaning for objects of the following types: Position
 
 
 ### longitude
@@ -94,7 +94,7 @@ This property has the type ``Floating point Number`` and only has well-defined m
 
 The longitude of this point on Earth according to the WGS-74 coordinate reference system in decimal degrees (e.g. 86.9253, -134.4323).
 
-This property has the type ``Floating point Number`` and only has well-defined meaning for objects of the following types: Place
+This property has the type ``Floating point Number`` and only has well-defined meaning for objects of the following types: Position
 
 
 ### altitude
@@ -103,16 +103,47 @@ This property has the type ``Floating point Number`` and only has well-defined m
 
 The elevation of this point relative to the Earth, in meters above or below mean sea level (e.g. 8848.00, -86.00).
 
-This property has the type ``Floating point Number`` and only has well-defined meaning for objects of the following types: Place
+This property has the type ``Floating point Number`` and only has well-defined meaning for objects of the following types: Position
 
+### address
+
+#### http://serene-wave-9290.herokuapp.com/schema-documentation/#address
+
+The physical address of the object (place). This is not necessarily constant for a single object (place). For example, a chair may be moved.
+
+This property has the type ``JSON Object`` and only has well-defined meaning for objects of the following types: Place
+
+### locality
+
+#### http://serene-wave-9290.herokuapp.com/schema-documentation/#locality
+
+The city or locality of the address.
+
+This property has the type ``String`` and only has well-defined meaning for objects of the following types: Address
+
+### region
+
+#### http://serene-wave-9290.herokuapp.com/schema-documentation/#region
+
+The state or region of the address.
+
+This property has the type ``String`` and only has well-defined meaning for objects of the following types: Address
+
+### provider
+
+#### http://serene-wave-9290.herokuapp.com/schema-documentation/#provider
+
+The application, group, or company that published the activity.
+
+This property has the type ``JSON Object`` and only has well-defined meaning for objects of the following types: Activity
 
 ### displayName
 
 #### http://serene-wave-9290.herokuapp.com/schema-documentation/#displayName
 
-A human-readable name that describes the object (place).
+A human-readable name that describes the object.
 
-This property has the type ``String`` and only has well-defined meaning for objects of the following types: Place
+This property has the type ``String`` and only has well-defined meaning for objects of the following types: Place, Provider
 
 
 ### startTime
