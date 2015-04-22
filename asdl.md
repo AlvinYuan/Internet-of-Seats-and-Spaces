@@ -67,6 +67,13 @@ Represents a physical location. This may be tied to a physical object (chair), a
 Represents an activity. This will be the object type for requests.
 
 
+### trainRecordWithSeatingInfo
+
+#### http://serene-wave-9290.herokuapp.com/schema-documentation/#trainRecordWithSeatingInfo
+
+Represents a trainRecord object from the Internet of Bart with additional information regarding available seats.
+
+
 ## Object Properties
 
 
@@ -105,6 +112,7 @@ The elevation of this point relative to the Earth, in meters above or below mean
 
 This property has the type ``Floating point Number`` and only has well-defined meaning for objects of the following types: Position
 
+
 ### address
 
 #### http://serene-wave-9290.herokuapp.com/schema-documentation/#address
@@ -112,6 +120,7 @@ This property has the type ``Floating point Number`` and only has well-defined m
 The physical address of the object (place). This is not necessarily constant for a single object (place). For example, a chair may be moved.
 
 This property has the type ``JSON Object`` and only has well-defined meaning for objects of the following types: Place
+
 
 ### locality
 
@@ -121,6 +130,7 @@ The city or locality of the address.
 
 This property has the type ``String`` and only has well-defined meaning for objects of the following types: Address
 
+
 ### region
 
 #### http://serene-wave-9290.herokuapp.com/schema-documentation/#region
@@ -129,6 +139,7 @@ The state or region of the address.
 
 This property has the type ``String`` and only has well-defined meaning for objects of the following types: Address
 
+
 ### provider
 
 #### http://serene-wave-9290.herokuapp.com/schema-documentation/#provider
@@ -136,6 +147,7 @@ This property has the type ``String`` and only has well-defined meaning for obje
 The application, group, or company that published the activity.
 
 This property has the type ``JSON Object`` and only has well-defined meaning for objects of the following types: Activity
+
 
 ### displayName
 
@@ -180,6 +192,15 @@ This property has the type ``JSON Array``, consists of ``String``s, and only has
 A human-readable explanation of the action (deny).
 
 This property has the type ``String`` and only has well-defined meaning for objects of the following types: Activity (verb: deny)
+
+
+### availableSeats
+
+#### http://serene-wave-9290.herokuapp.com/schema-documentation/#availableSeats
+
+A count of the number of available seats in the Bart car.
+
+This property has the type ``Integer`` and only has well-defined meaning for objects of the following types: trainRecordWithSeatingInfo
 
 
 

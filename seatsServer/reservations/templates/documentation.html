@@ -251,6 +251,12 @@
     See the request documentation for an example.
   </p>
 
+  <h3 id="trainRecordWithSeatingInfo">trainRecordWithSeatingInfo</h3>
+  <p>
+    Represents a trainRecord object from the Internet of Bart with additional information regarding available seats.
+    This will have the same properties as a trainRecord object from the <a href="https://github.com/dret/lectures/blob/master/iot-spring15/asdl/BART.md">Internet of Bart</a> project, but will have an additional availableSeats property per car.
+  </p>
+
   <h2>Object Properties</h2>
 
   <p>
@@ -320,6 +326,13 @@
     A human-readable explanation of the action (deny).
     <br>
     This property has the type String and only has well-defined meaning for objects of the following types: Activity (verb: deny)
+  </p>
+
+  <h3 id="availableSeats">availableSeats</h3>
+  <p>
+    A count of the number of available seats in the Bart car.
+    <br>
+    This property has the type Integer and only has well-defined meaning for objects of the following types: trainRecordWithSeatingInfo
   </p>
 
 </body>
