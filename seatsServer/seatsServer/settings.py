@@ -69,7 +69,7 @@ DATABASES = {
     }
 }
 # Heroku
-DATABASES['default'] =  dj_database_url.config()
+# DATABASES['default'] =  dj_database_url.config()
 
 
 # Internationalization
@@ -113,6 +113,8 @@ SITE_ID = 1
 # Push notifications certificate location
 PUSH_NOTIFICATIONS_SETTINGS = {
         "APNS_CERTIFICATE": os.path.join(BASE_DIR, 'resources' ,'iotseats_ck.pem'),
+        #set up server with Android GCM (Google Cloud Messaging) API Key
+        "GCM_API_KEY": "AIzaSyAffQ0d6FWR8Vyk_uYe9vJrSrnozW13eOQ"
 }
 
 SOUTH_MIGRATION_MODULES = {"push_notifications": "push_notifications.south_migrations"}
