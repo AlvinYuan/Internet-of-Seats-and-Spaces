@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     url(r'^new_request/', reservations.views.new_request, name='new_request'),
     url(r'^create_subscriber/', reservations.views.create_subscriber, name='create_subscriber'),
     url(r'^create_reservation_subscription/', reservations.views.create_reservation_subscription, name='create_reservation_subscription'),
+    url(r'^request_administrator_view/', reservations.views.request_administrator_view, name='request_administrator_view'),
+    url(r'^request/(?P<verb>approve|deny)/', reservations.views.handle_request, name='handle_request'),
     # Simulate Chair
     url(r'^post_chair_update/', reservations.views.post_chair_update, name='post_chair_update'),
     # Phone Notifications
