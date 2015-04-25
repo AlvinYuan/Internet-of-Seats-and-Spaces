@@ -1,25 +1,10 @@
 package com.example.audrey.AndroidSeats;
 
-import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-
-import org.json.JSONObject;
-import org.json.JSONArray;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import static android.view.View.OnClickListener;
-
 
 public class MyActivity extends ActionBarActivity {
 
