@@ -1,6 +1,7 @@
 package com.example.audrey.AndroidSeats;
 
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,92 +21,25 @@ import java.net.URL;
 import static android.view.View.OnClickListener;
 
 
-public class MyActivity extends ActionBarActivity implements OnClickListener {
-
-    private static final String TAG = "MyActivity";
-    private Button btn;
+public class MyActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my);
-        btn=(Button)findViewById(R.id.button);
-        btn.setOnClickListener(this);
-    }
 
-    public void onClick(View v) {
-        Log.d("Test", "Hello World!");
-        doAsyncPost();
-    }
+        ActionBar actionBar = getSupportActionBar();
+        System.out.println(actionBar);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-    public void doAsyncPost() {
-        //http://stackoverflow.com/questions/13911993/sending-a-json-http-post-request-from-android
-        //Create JSONObject
-        JSONObject jsonParam = new JSONObject();
-        try{
-            jsonParam.put("actor", "Audrey's Awesome Android App")
-            .put("verb", "request")
-            .put("object", new JSONObject()
-                .put("objectType", "place")
-                .put("id", "http://example.org/berkeley/southhall/202/chair/1")
-                .put("displayName", "Chair at 202 South Hall, UC Berkeley")
-                .put("position", new JSONObject()
-                    .put("latitude", 34.34)
-                    .put("longitude", -127.23)
-                    .put("altitude", 100.05)))
-            .put("descriptor-tags", new JSONArray()
-                .put("chair")
-                .put("rolling"));
-        } catch (Exception e) {
-            Log.d("error","Err1 message");
-        }
+        ActionBar.Tab FSMCafeTab = actionBar.newTab();
+        FSMCafeTab.setText("FSM Cafe");
+        FSMCafeTab.setTabListener(new SpaceTabListener<FSMCafeFragment>(this, "FSM Cafe", FSMCafeFragment.class));
+        actionBar.addTab(FSMCafeTab);
 
-        Log.e(TAG, jsonParam.toString());
-
-        MyAsyncTask task = new MyAsyncTask();
-        task.execute(jsonParam);
-    }
-
-    class MyAsyncTask extends AsyncTask<JSONObject, Integer, Void> {
-
-        @Override
-        protected Void doInBackground(JSONObject... params) {
-            postToASBase(params[0].toString());
-            return null;
-        }
-
-        public void postToASBase(String activityJsonString) {
-            // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
-
-            try {
-                URL asBaseURL = new URL("http://russet.ischool.berkeley.edu:8080/activities");
-                HttpURLConnection asBaseConn = (HttpURLConnection) asBaseURL.openConnection();
-
-                byte[] postData = activityJsonString.getBytes("UTF-8");
-
-                asBaseConn.setDoOutput(true);
-                asBaseConn.setDoInput(true);
-                asBaseConn.setRequestMethod("POST");
-                asBaseConn.setRequestProperty("Content-Type", "application/stream+json");
-                asBaseConn.setRequestProperty("Content-Length", String.valueOf(postData.length));
-                asBaseConn.getOutputStream().write(postData);
-
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(asBaseConn.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                //print result
-                Log.d(TAG, response.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        ActionBar.Tab bartTab = actionBar.newTab();
+        bartTab.setText("Bart");
+        bartTab.setTabListener(new SpaceTabListener<BartFragment>(this, "Bart", BartFragment.class));
+        actionBar.addTab(bartTab);
     }
 
     @Override
