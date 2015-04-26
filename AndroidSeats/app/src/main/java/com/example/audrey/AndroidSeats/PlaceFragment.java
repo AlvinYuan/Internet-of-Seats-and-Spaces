@@ -55,6 +55,7 @@ public abstract class PlaceFragment extends Fragment implements View.OnClickList
         if (p != null && p.status == Place.Status.AVAILABLE) {
             try {
                 p.request();
+                Toast.makeText(getActivity(), "Place requested!", Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
