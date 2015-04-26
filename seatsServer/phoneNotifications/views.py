@@ -23,12 +23,12 @@ subscription_actor_text = "Reserversion Result"
 #
 # The GCM api key & APNS cert info are specified in seatsServer/settings.py:PUSH_NOTIFICATIONS_SETTINGS
 @csrf_exempt
-def register_device(response):
+def register_device(request):
 	response_json = {}
 	print 'in_register_device'
 
-	if response.method == "POST":
-		device_json = json.loads(response.body)
+	if request.method == "POST":
+		device_json = json.loads(request.body)
 		device_token = device_json["device_token"]
 		system = device_json['system']
 
@@ -77,12 +77,12 @@ def register_device(response):
 # TODO: 
 # 2. add the field to new_request response to specify the device
 @csrf_exempt
-def reservation_result(response):
+def reservation_result(request):
 	response_json = {}
 	print 'in_reservation_result'
 	
-	if response.method == "POST":
-		device_json = json.loads(response.body)
+	if request.method == "POST":
+		device_json = json.loads(request.body)
 		device_token = device_json["device_id"]
 		system = device_json['system']
 		seat = device_json['seat_id']
@@ -141,7 +141,7 @@ def reservation_result(response):
 
 
 # this function is used by the server to subscribe itself (subscriber_id) with AS. It registers a callback that points to itself at /reservation_result. AS will POST any activity notifications to this endpoint for this subscriber (once we subscribe for them elsewhere).
-def create_phone_notifications_subscriber(response):
+def create_phone_notifications_subscriber(request):
 	subscribe_url = ASBase_url + "/users"
 	r = requests.get(subscribe_url)
 	users = r.json()
@@ -159,7 +159,7 @@ def create_phone_notifications_subscriber(response):
 		return HttpResponse(r.content)
 
 # Endpoint used by the server/admin to subscribe the *server* (hard-coded id subscription_id_deny right now) with ASBase. Should only need to be done once for this service!
-def create_deny_reservation_subscription(response):
+def create_deny_reservation_subscription(request):
 	# create_subscription_by_verb(response, 'deny', subscription_id_deny)
 	verb = 'deny'
 	subscription_id = subscription_id_deny
@@ -188,7 +188,7 @@ def create_deny_reservation_subscription(response):
 		return HttpResponse(r.content)
 
 # Endpoint used by the server/admin to subscribe the *server* (hard-coded id subscription_id_approve right now) with ASBase. Should only need to be done once for this service!
-def create_approve_reservation_subscription(response):
+def create_approve_reservation_subscription(request):
 	# create_subscription_by_verb(response, 'approve', subscription_id_approve)
 
 	verb = 'approve'
