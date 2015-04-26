@@ -11,12 +11,13 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -24,17 +25,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import org.json.JSONObject;
-import org.json.JSONArray;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static android.view.View.OnClickListener;
 
 /**
  * Main UI for the app. Register for GCM.
@@ -45,7 +37,7 @@ import static android.view.View.OnClickListener;
  * adapted from: https://developer.android.com/google/gcm/client.html
  */
 
-public class MyActivity extends ActionBarActivity implements OnClickListener {
+public class MyActivity extends ActionBarActivity {
 
     private static final String TAG = "MyActivity"; //tag used in log mesgs
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -59,8 +51,6 @@ public class MyActivity extends ActionBarActivity implements OnClickListener {
      */
     String SENDER_ID = "994765306421";
 
-    private Button btn;
-
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     SharedPreferences prefs;
@@ -72,9 +62,7 @@ public class MyActivity extends ActionBarActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Check the device to make sure it has the Google Play Services APK.
-        //The check in onCreate() ensures that the app can't be used without a successful check.
-        setContentView(R.layout.activity_my);
+//        setContentView(R.layout.activity_my);
 
         ActionBar actionBar = getSupportActionBar();
         System.out.println(actionBar);
@@ -90,6 +78,8 @@ public class MyActivity extends ActionBarActivity implements OnClickListener {
         bartTab.setTabListener(new SpaceTabListener<BartFragment>(this, "Bart", BartFragment.class));
         actionBar.addTab(bartTab);
 
+        //Check the device to make sure it has the Google Play Services APK.
+        //The check in onCreate() ensures that the app can't be used without a successful check.
         context = getApplicationContext();
         // Check device for Play Services APK.  If check succeeds, proceed with
         //  GCM registration.
@@ -103,9 +93,6 @@ public class MyActivity extends ActionBarActivity implements OnClickListener {
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
-
-        btn = (Button)findViewById(R.id.button);
-        btn.setOnClickListener(this);
     }
 
 
@@ -369,83 +356,6 @@ public class MyActivity extends ActionBarActivity implements OnClickListener {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    public void onClick(View v) {
-        Log.d("Test", "Hello World!");
-        createTestActivity();
-    }
-
-    public void createTestActivity() {
-        //http://stackoverflow.com/questions/13911993/sending-a-json-http-post-request-from-android
-        //Create JSONObject
-        JSONObject jsonParam = new JSONObject();
-        try{
-            jsonParam.put("actor", "Audrey's Awesome Android App")
-            .put("verb", "request")
-            .put("object", new JSONObject()
-                .put("objectType", "place")
-                .put("id", "http://example.org/berkeley/southhall/202/chair/1")
-                .put("displayName", "Chair at 202 South Hall, UC Berkeley")
-                .put("position", new JSONObject()
-                    .put("latitude", 34.34)
-                    .put("longitude", -127.23)
-                    .put("altitude", 100.05)))
-            .put("descriptor-tags", new JSONArray()
-                .put("chair")
-                .put("rolling"));
-        } catch (Exception e) {
-            Log.d("error","Err1 message");
-        }
-
-        Log.e(TAG, jsonParam.toString());
-
-        AsyncPostTask task = new AsyncPostTask();
-        task.execute(jsonParam);
-    }
-
-    class AsyncPostTask extends AsyncTask<JSONObject, Integer, Void> {
-
-        @Override
-        protected Void doInBackground(JSONObject... params) {
-            postToASBase(params[0].toString());
-            return null;
-        }
-
-        public void postToASBase(String activityJsonString) {
-            // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
-
-            try {
-                URL asBaseURL = new URL("http://russet.ischool.berkeley.edu:8080/activities");
-                HttpURLConnection asBaseConn = (HttpURLConnection) asBaseURL.openConnection();
-
-                byte[] postData = activityJsonString.getBytes("UTF-8");
-
-                asBaseConn.setDoOutput(true);
-                asBaseConn.setDoInput(true);
-                asBaseConn.setRequestMethod("POST");
-                asBaseConn.setRequestProperty("Content-Type", "application/stream+json");
-                asBaseConn.setRequestProperty("Content-Length", String.valueOf(postData.length));
-                asBaseConn.getOutputStream().write(postData);
-
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(asBaseConn.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                //print result
-                Log.d(TAG, response.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 }
 

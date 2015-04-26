@@ -1,6 +1,7 @@
 package com.example.audrey.AndroidSeats;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 
 import org.json.JSONArray;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
  * Created by alvin on 4/24/2015.
  */
 class QueryPlaceAsyncTask extends AsyncTask<String, Integer, JSONObject> {
+    private static final String TAG = QueryPlaceAsyncTask.class.getSimpleName();
     PlaceFragment placeFragment;
 
     public QueryPlaceAsyncTask(PlaceFragment placeFragment) {
@@ -87,6 +89,12 @@ class QueryPlaceAsyncTask extends AsyncTask<String, Integer, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject jsonObject) {
+        if (jsonObject == null) {
+            // TODO: display error message
+            Log.e(TAG, "Error, no valid response!");
+            return;
+        }
+
         ArrayList<String> foundPlaceIds = new ArrayList<String>();
 
         try {
