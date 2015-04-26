@@ -51,9 +51,10 @@ def register_device(request):
 				device = APNSDevice.objects.get(registration_id=device_token)
 			else:
 				device = GCMDevice.objects.get(registration_id=device_token)
-			device.delete()
+			print device
+			#device.delete()  # this line will crash and respond with 500
 
-			print 'delete object in db'
+			#print 'delete object in db'
 			response_json['message'] = 'This device is already registered.'
 
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
