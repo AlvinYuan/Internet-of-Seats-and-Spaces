@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/seat"
+            android:id="@+id/seat1"
+            android:layout_gravity="center_horizontal" />
+
+        <View
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/rectangle"
+            android:id="@+id/table1_2"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/seat"
+            android:id="@+id/seat2"
+            android:layout_gravity="center_horizontal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/seat"
+            android:id="@+id/seat3"
+            android:layout_gravity="center_horizontal" />
+
+        <View
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/rectangle"
+            android:id="@+id/table3_4"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/seat"
+            android:id="@+id/seat4"
+            android:layout_gravity="center_horizontal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/seat"
+            android:id="@+id/seat5"
+            android:layout_gravity="center_horizontal" />
+
+        <View
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/rectangle"
+            android:id="@+id/table5_6"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/seat"
+            android:id="@+id/seat6"
+            android:layout_gravity="center_horizontal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</LinearLayout>

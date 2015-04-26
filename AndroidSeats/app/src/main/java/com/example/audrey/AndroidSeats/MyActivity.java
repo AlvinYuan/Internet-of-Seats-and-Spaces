@@ -14,13 +14,11 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.WakefulBroadcastReceiver;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -73,9 +71,24 @@ public class MyActivity extends ActionBarActivity implements OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //Check the device to make sure it has the Google Play Services APK.
         //The check in onCreate() ensures that the app can't be used without a successful check.
         setContentView(R.layout.activity_my);
+
+        ActionBar actionBar = getSupportActionBar();
+        System.out.println(actionBar);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        ActionBar.Tab FSMCafeTab = actionBar.newTab();
+        FSMCafeTab.setText("FSM Cafe");
+        FSMCafeTab.setTabListener(new SpaceTabListener<FSMCafeFragment>(this, "FSM Cafe", FSMCafeFragment.class));
+        actionBar.addTab(FSMCafeTab);
+
+        ActionBar.Tab bartTab = actionBar.newTab();
+        bartTab.setText("Bart");
+        bartTab.setTabListener(new SpaceTabListener<BartFragment>(this, "Bart", BartFragment.class));
+        actionBar.addTab(bartTab);
 
         context = getApplicationContext();
         // Check device for Play Services APK.  If check succeeds, proceed with
@@ -432,13 +445,7 @@ public class MyActivity extends ActionBarActivity implements OnClickListener {
                 e.printStackTrace();
             }
         }
+
     }
 }
-
-
-
-
-
-
-
 

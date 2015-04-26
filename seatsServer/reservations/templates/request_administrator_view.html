@@ -27,6 +27,7 @@
 	<table>
 		<tr>
 			<th>Status</th>
+			<th>Place</th>
 			<th>Requestor</th>
 			<th>Start Time</th>
 			<th>End Time</th>
@@ -36,6 +37,7 @@
 		{% for r in requests %}
 		<tr>
 			<td>{{ r.status }}</td>
+			<td>{{ r.object.displayName }}</td>
 			<td>{{ r.actor.displayName }}</td>
 			<td>{{ r.startTime }}</td>
 			<td>{{ r.endTime }}</td>
