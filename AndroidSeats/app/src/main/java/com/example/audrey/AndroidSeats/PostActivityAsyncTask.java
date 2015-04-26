@@ -14,7 +14,6 @@ import java.net.URL;
  * Created by alvin on 4/24/2015.
  */
 class PostActivityAsyncTask extends AsyncTask<JSONObject, Integer, Void> {
-
     @Override
     protected Void doInBackground(JSONObject... params) {
         postToASBase(params[0].toString());
