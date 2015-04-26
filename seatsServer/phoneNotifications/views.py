@@ -51,6 +51,7 @@ def register_device(request):
 				device = APNSDevice.objects.get(registration_id=device_token)
 			else:
 				device = GCMDevice.objects.get(registration_id=device_token)
+			print device
 			device.delete()
 
 			print 'delete object in db'
