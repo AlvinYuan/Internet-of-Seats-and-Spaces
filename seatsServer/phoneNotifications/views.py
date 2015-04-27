@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from datetime import datetime
 from django.contrib.sites.models import Site
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from push_notifications.models import APNSDevice, GCMDevice
@@ -33,8 +34,8 @@ def register_device(request):
 		system = device_json['system']
 
 		print '====device info====='
-		print device_token
-		print system
+		print 'request: ' + device_token
+		print 'request: ' + system
 		print '====device info end====='
 
 		# TODO: error result: error code or status
@@ -60,7 +61,7 @@ def register_device(request):
 			response_json['message'] = 'This device is already registered.'
 
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
-		except (GCMDevice.objects.DoesNotExist, APNSDevice.DoesNotExist) as e:
+		except ObjectDoesNotExist as e:
 			print 'object does not exist'
 			# Register device.
 			if system == 'iOS':
@@ -68,7 +69,7 @@ def register_device(request):
 			else:
 				device = GCMDevice.objects.create(registration_id=device_token)
 			# This device is successfully registered.
-			print 'create object in db'
+			print 'create object in db: %s' % (device)
 			response_json['message'] = 'This device is successfully registered.'
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
 		except: 
