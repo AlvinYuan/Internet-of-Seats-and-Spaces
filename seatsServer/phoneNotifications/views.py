@@ -82,6 +82,7 @@ def register_device(request):
 # 2. add the field to new_request response to specify the device
 # to hit the server, type into terminal:
 # curl -X POST -H "Content-Type: application/json"   -d '{"device_id":"APA91bEKvxn-y2oGlUDvGEZw9cpDCHYS0AukuelvEd2taXEMpZ7rMKJQfiYPK_viwuI19kCTOkj3JKBQBPFjb6w4WDeD1696U_G7picM0yKZ027a3tuVeyZ7_LdVAqrUe0GiRGv25sNpZe5DplbC5yRYAK9LL3_KeA", "system":"Android", "seat_id":"NameOfSeat", "reservation_result":"available"}' http://serene-wave-9290.herokuapp.com/reservation_result/
+
 @csrf_exempt
 def reservation_result(request):
 	response_json = {}
@@ -122,8 +123,10 @@ def reservation_result(request):
 				device.send_message(None, badge=1, extra={"foo": "bar"}) # Silent message with badge and added custom data.
 			else:
 				print 'try to match Android device'
+  				new_device_ids = GCMDevice.objects.all()
+               	device_id = new_device_ids[0].registration_id
+               	print device_id
 				device = GCMDevice.objects.get(registration_id=device_id)
-				print device + "now send message"
 				# The first argument will be sent as "message" to the intent extras Bundle
 				# Retrieve it with intent.getExtras().getString("message")
 				# Alert message may only be sent as text.
