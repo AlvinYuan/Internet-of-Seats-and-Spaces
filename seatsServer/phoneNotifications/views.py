@@ -48,8 +48,10 @@ def register_device(request):
 			print 'try to find object in db'
 			# This device is already registered.
 			if system == 'iOS':
+				print 'looking up iOS'
 				device = APNSDevice.objects.get(registration_id=device_token)
 			else:
+				print 'looking up Android'
 				device = GCMDevice.objects.get(registration_id=device_token)
 			print device
 			#device.delete()  # this line will crash and respond with 500
