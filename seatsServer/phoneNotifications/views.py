@@ -55,7 +55,7 @@ def register_device(request):
 				print 'looking up Android'
 				device = GCMDevice.objects.get(registration_id=device_token)
 			print device
-			#device.delete()  # this line will crash and respond with 500
+			#device.delete() 
 
 			#print 'delete object in db'
 			response_json['message'] = 'This device is already registered.'
@@ -72,9 +72,6 @@ def register_device(request):
 			print 'create object in db: %s' % (device)
 			response_json['message'] = 'This device is successfully registered.'
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
-		except: 
-			print "Unexpected error:", sys.exc_info()[0]
-			raise
 	else:
 		response_json['message'] = 'Bad Request: The server only supports POSTs.'
 		return HttpResponseBadRequest(json.dumps(response_json), content_type="application/json")
