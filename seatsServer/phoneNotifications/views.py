@@ -14,7 +14,7 @@ subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
 subscription_id_deny = "DeniedReservationSubscription"
 subscription_id_approve = "ApprovedReservationSubscription"
-subscription_actor_text = "Reserversion Result"
+subscription_actor_text = "Reservatiion Result"
 
 # The end-user's app calls the /register_device endpoint, providing the following info in the POST body (required by the push module):
 #
@@ -80,6 +80,8 @@ def register_device(request):
 # Handler for our callback endpoint (subscriber_url) we registered with AS.
 # TODO: 
 # 2. add the field to new_request response to specify the device
+
+# ANDROID
 # to hit the server, type into terminal:
 # curl -X POST -H "Content-Type: application/json"   -d '{"device_id":"APA91bEKvxn-y2oGlUDvGEZw9cpDCHYS0AukuelvEd2taXEMpZ7rMKJQfiYPK_viwuI19kCTOkj3JKBQBPFjb6w4WDeD1696U_G7picM0yKZ027a3tuVeyZ7_LdVAqrUe0GiRGv25sNpZe5DplbC5yRYAK9LL3_KeA", "system":"Android", "seat_id":"NameOfSeat", "reservation_result":"available"}' http://serene-wave-9290.herokuapp.com/reservation_result/
 
@@ -195,6 +197,10 @@ def create_deny_reservation_subscription(request):
 		subscription["ASTemplate"] = {}
 		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
+		
+		#TODO: change subscription request to look for requests for places
+		#subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
+		#subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
 
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
