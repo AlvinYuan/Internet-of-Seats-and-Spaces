@@ -123,9 +123,9 @@ def reservation_result(request):
 				device.send_message(None, badge=1, extra={"foo": "bar"}) # Silent message with badge and added custom data.
 			else:
 				print 'try to match Android device'
-  				new_device_ids = GCMDevice.objects.all()
-               	device_id = new_device_ids[0].registration_id
-               	print device_id
+				new_device_ids = GCMDevice.objects.all()
+				device_id = new_device_ids[0].registration_id
+				print device_id
 				device = GCMDevice.objects.get(registration_id=device_id)
 				# The first argument will be sent as "message" to the intent extras Bundle
 				# Retrieve it with intent.getExtras().getString("message")
