@@ -25,7 +25,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -87,9 +94,9 @@ public class MyActivity extends ActionBarActivity {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
 
-            if (regid.isEmpty()) {
+//            if (regid.isEmpty()) {
                 registerInBackground();
-            }
+//            }
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
@@ -186,7 +193,7 @@ public class MyActivity extends ActionBarActivity {
         AsyncTask t = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] params) {
-
+                Log.d(TAG,"start registration doInBackground");
                 String msg = "";
                 try {
                     if (gcm == null) {
@@ -200,9 +207,10 @@ public class MyActivity extends ActionBarActivity {
                     // The request to your server should be authenticated if your app
                     // is using accounts.
                     sendRegistrationIdToBackend();
-
+                    Log.d(TAG,"sendRegistrationIdToBackend");
                     // Persist the registration ID - no need to register again.
                     storeRegistrationId(context, regid);
+                    Log.d(TAG,"registration ID stored");
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
                     // If there is an error, don't just keep trying to register.
@@ -215,6 +223,48 @@ public class MyActivity extends ActionBarActivity {
         t.execute(null, null);
     }
 
+    class SendRegIdAsyncTask extends AsyncTask<JSONObject, Integer, Void> {
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            Log.d(TAG,"send registration async task doInBackground");
+            postToServer(params[0].toString());
+            return null;
+        }
+
+        public void postToServer(String deviceJsonString) {
+            // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
+            Log.d(TAG,"post to server running");
+            try {
+                URL serverURL = new URL("http://serene-wave-9290.herokuapp.com/register_device/");
+                HttpURLConnection serverConn = (HttpURLConnection) serverURL.openConnection();
+
+                byte[] postData = deviceJsonString.getBytes("UTF-8");
+
+                serverConn.setDoOutput(true);
+                serverConn.setDoInput(true);
+                serverConn.setRequestMethod("POST");
+                serverConn.setRequestProperty("Content-Type", "application/stream+json");
+                serverConn.setRequestProperty("Content-Length", String.valueOf(postData.length));
+                serverConn.getOutputStream().write(postData);
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(serverConn.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                //print result
+                Log.d(this.getClass().getSimpleName(), response.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
      * or CCS to send messages to your app. Not needed for this demo since the
@@ -222,7 +272,20 @@ public class MyActivity extends ActionBarActivity {
      * using the 'from' address in the message.
      */
     private void sendRegistrationIdToBackend() {
-        // Your implementation here.
+        // Implementation of connecting to server here
+        // Create a subclass of AsyncTask and instance of subclass
+        SendRegIdAsyncTask send = new SendRegIdAsyncTask();
+        Log.d(TAG,"send registration id async task running");
+        //http://stackoverflow.com/questions/13911993/sending-a-jsonObject-http-post-request-from-android
+        try {
+            JSONObject deviceJSON = new JSONObject()
+                    .put("device_token",regid)
+                    .put("system", "Android");
+            send.execute(deviceJSON);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG,"send registration id finished");
     }
 
     /**
@@ -246,9 +309,14 @@ public class MyActivity extends ActionBarActivity {
 
     //A broadcast receiver is the mechanism GCM uses to deliver messages.
 
-    public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
+    public static class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
+        public GcmBroadcastReceiver() {
+            super();
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "received message" + intent);
             // Explicitly specify that GcmIntentService will handle the intent.
             ComponentName comp = new ComponentName(context.getPackageName(),
                     GcmIntentService.class.getName());
@@ -261,7 +329,7 @@ public class MyActivity extends ActionBarActivity {
     /**This snippet processes the GCM message based on message type, and posts
      the result in a notification */
 
-    public class GcmIntentService extends IntentService {
+    public static class GcmIntentService extends IntentService {
         public static final int NOTIFICATION_ID = 1;
         private NotificationManager mNotificationManager;
         NotificationCompat.Builder builder;
@@ -306,6 +374,7 @@ public class MyActivity extends ActionBarActivity {
                     }
                     Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                     // Post notification of received message.
+                    // TODO: extract JSON mesesage from the Bundle and get JSON message out of bundle; access payload cleanly defined by python library or GCM
                     sendNotification("Received: " + extras.toString());
                     Log.i(TAG, "Received: " + extras.toString());
                 }
