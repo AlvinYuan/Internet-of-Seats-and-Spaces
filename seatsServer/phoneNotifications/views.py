@@ -58,14 +58,14 @@ def register_device(request):
 			response_json['message'] = 'This device is already registered.'
 
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
-		except APNSDevice.DoesNotExist:
-			print 'object not exist'
-			# This device is successfully registered.
+		except (GCMDevice.objects.DoesNotExist, APNSDevice.DoesNotExist) as e:
+			print 'object does not exist'
+			# Register device.
 			if system == 'iOS':
 				device = APNSDevice.objects.create(registration_id=device_token)
 			else:
 				device = GCMDevice.objects.create(registration_id=device_token)
-
+			# This device is successfully registered.
 			print 'create object in db'
 			response_json['message'] = 'This device is successfully registered.'
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
