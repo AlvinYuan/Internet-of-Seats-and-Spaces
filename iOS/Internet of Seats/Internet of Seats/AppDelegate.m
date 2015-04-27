@@ -12,12 +12,99 @@
 
 @end
 
+static NSString * const kPushServerHost = @"http://serene-wave-9290.herokuapp.com";
+static NSString * const kRegisterDevicePath = @"/register_device/";
+
 @implementation AppDelegate
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    // Register for Remote Notifications
+    if([[UIApplication sharedApplication]  respondsToSelector:@selector(registerUserNotificationSettings:)]){
+        UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+        [[UIApplication sharedApplication]  registerUserNotificationSettings:settings];
+        [[UIApplication sharedApplication]  registerForRemoteNotifications];
+    }
+    else {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert| UIRemoteNotificationTypeBadge |  UIRemoteNotificationTypeSound)];
+    }
+    
     return YES;
+}
+
+
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    const unsigned *tokenBytes = [deviceToken bytes];
+    NSString *iOSDeviceToken =
+    [NSString stringWithFormat:@"%08x%08x%08x%08x%08x%08x%08x%08x",
+     ntohl(tokenBytes[0]), ntohl(tokenBytes[1]), ntohl(tokenBytes[2]),
+     ntohl(tokenBytes[3]), ntohl(tokenBytes[4]), ntohl(tokenBytes[5]),
+     ntohl(tokenBytes[6]), ntohl(tokenBytes[7])];
+    
+    [self sentRequest:iOSDeviceToken];
+    NSLog(@"Did Register for Remote Notifications with Device Token (%@)", deviceToken);
+}
+
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    NSLog(@"Did Fail to Register for Remote Notifications");
+    NSLog(@"%@, %@", error, error.localizedDescription);
+    
+}
+
+- (void)sentRequest:(NSString *)iOSDeviceToken {
+    // Send device token to push server
+    dispatch_group_t requestGroup = dispatch_group_create();
+    
+    dispatch_group_enter(requestGroup);
+    [self sendDeviceTokenToServer:iOSDeviceToken withCompletionHandler:^(NSDictionary *responseJson, NSError *error) {
+        
+        // TODO: check if there is any error and the response data correct
+        dispatch_group_leave(requestGroup);
+    }];
+    
+    dispatch_group_wait(requestGroup, DISPATCH_TIME_FOREVER); // This avoids the program exiting before all our asynchronous callbacks have been made.
+    
+}
+
+- (void)sendDeviceTokenToServer:(NSString *)deviceToken withCompletionHandler:(void (^)(NSDictionary *responseJson, NSError *error))completionHandler
+{
+    NSURLRequest *searchRequest = [self _sendDeviceTokenToServer:deviceToken];
+    
+    
+    NSURLSession *session = [NSURLSession sharedSession];
+    [[session dataTaskWithRequest:searchRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        
+        if (!error && httpResponse.statusCode == 200) {
+            NSLog(@"Success");
+            
+            // TODO: check if the response data is correct, if it's not, callcompletionHandler(nil, error)
+        } else {
+            NSLog(@"Fail:%ld", (long)httpResponse.statusCode);
+            completionHandler(nil, error); // An error happened or the HTTP response is not a 201 OK
+        }
+    }] resume];
+}
+
+- (NSURLRequest *)_sendDeviceTokenToServer:(NSString *)deviceToken{
+    
+    // TODO: - replace startTime, endTime, requestID, chairID, position, descriptor-tags
+    NSDictionary *params = @{
+                             @"device_token":deviceToken,
+                             @"system":@"iOS",
+                             };
+    
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kPushServerHost, kRegisterDevicePath]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:jsonData];
+    return request;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
