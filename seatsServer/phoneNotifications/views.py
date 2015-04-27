@@ -80,14 +80,18 @@ def register_device(request):
 # Handler for our callback endpoint (subscriber_url) we registered with AS.
 # TODO: 
 # 2. add the field to new_request response to specify the device
+# to hit the server, type into terminal:
+# curl -X POST -H "Content-Type: application/json"   -d '{"device_id":"APA91bEKvxn-y2oGlUDvGEZw9cpDCHYS0AukuelvEd2taXEMpZ7rMKJQfiYPK_viwuI19kCTOkj3JKBQBPFjb6w4WDeD1696U_G7picM0yKZ027a3tuVeyZ7_LdVAqrUe0GiRGv25sNpZe5DplbC5yRYAK9LL3_KeA", "system":"Android", "seat_id":"NameOfSeat", "reservation_result":"available"}' http://serene-wave-9290.herokuapp.com/reservation_result/
 @csrf_exempt
 def reservation_result(request):
 	response_json = {}
 	print 'in_reservation_result'
 	
 	if request.method == "POST":
+		print 'in request.method POST'
 		device_json = json.loads(request.body)
-		device_token = device_json["device_id"]
+		print 'load json'
+		device_id = device_json["device_id"]
 		system = device_json['system']
 		seat = device_json['seat_id']
 		result = device_json['reservation_result']
@@ -110,14 +114,14 @@ def reservation_result(request):
 			print 'try to match device in db'
 			# This device is already registered.
 			if system == 'iOS':
-				device = APNSDevice.objects.get(id=device_id)
+				device = APNSDevice.objects.get(registration_id=device_id)
 
 				# Alert message may only be sent as text.
 				device.send_message("The seat reservation for " + seat + " is " + result)
 				device.send_message(None, badge=5) # No alerts but with badge.
 				device.send_message(None, badge=1, extra={"foo": "bar"}) # Silent message with badge and added custom data.
 			else:
-				device = GCMDevice.objects.get(id=device_id)
+				device = GCMDevice.objects.get(registration_id=device_id)
 				# The first argument will be sent as "message" to the intent extras Bundle
 				# Retrieve it with intent.getExtras().getString("message")
 				# Alert message may only be sent as text.
@@ -135,7 +139,7 @@ def reservation_result(request):
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
 		
 		# TODO: error result: error code or status
-		except APNSDevice.DoesNotExist:
+		except (GCMDevice.DoesNotExist, APNSDevice.DoesNotExist) as e:
 			print 'device not found'
 			response_json['message'] = 'This device is not registered.'
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
