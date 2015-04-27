@@ -69,6 +69,9 @@ def register_device(request):
 			print 'create object in db'
 			response_json['message'] = 'This device is successfully registered.'
 			return HttpResponse(json.dumps(response_json), content_type="application/json")
+		except: 
+			print "Unexpected error:", sys.exc_info()[0]
+			raise
 	else:
 		response_json['message'] = 'Bad Request: The server only supports POSTs.'
 		return HttpResponseBadRequest(json.dumps(response_json), content_type="application/json")
