@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import reservations.views
 import phoneNotifications.views
+import phoneRealTimeUpdates.views
 
 urlpatterns = patterns('',
     # Examples:
@@ -26,4 +27,9 @@ urlpatterns = patterns('',
     url(r'^create_phone_notifications_subscriber/', phoneNotifications.views.create_phone_notifications_subscriber, name='create_phone_notifications_subscriber'),
     url(r'^create_deny_reservation_subscription/', phoneNotifications.views.create_deny_reservation_subscription, name='create_deny_reservation_subscription'),
     url(r'^create_approve_reservation_subscription/', phoneNotifications.views.create_approve_reservation_subscription, name='create_approve_reservation_subscription'),
+    # Phone Real Time Updates
+    url(r'^phoneRealTimeUpdates/place_status_update/', phoneRealTimeUpdates.views.place_status_update),
+    url(r'^phoneRealTimeUpdates/create_subscriber/', phoneRealTimeUpdates.views.create_subscriber),
+    url(r'^phoneRealTimeUpdates/create_normal_update_subscription/', phoneRealTimeUpdates.views.create_normal_update_subscription),
+    url(r'^phoneRealTimeUpdates/create_reservation_update_subscription/', phoneRealTimeUpdates.views.create_reservation_update_subscription),
 )
