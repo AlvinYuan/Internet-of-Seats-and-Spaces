@@ -49,11 +49,15 @@ public class Place {
     }
 
     // ASSUMPTION: Controller logic ensures this is called only when it makes sense.
-    public void request() throws JSONException {
+    public void request(String regid) throws JSONException {
         //http://stackoverflow.com/questions/13911993/sending-a-jsonObject-http-post-request-from-android
         // Create Activity
+
+        //data type, variable name = new object constructor Person
+        Person actor = new Person("Android App",regid);
+
         JSONObject activity = new JSONObject()
-            .put("actor", Person.self.asJson())
+            .put("actor", actor.asJson())
             .put("verb", "request")
             .put("object", jsonObject)
             .put("provider", ActivityUtil.providerJson)

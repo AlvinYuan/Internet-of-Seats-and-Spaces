@@ -1,8 +1,11 @@
 package com.example.audrey.AndroidSeats;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,6 +18,7 @@ import java.util.Map;
  * Created by alvin on 4/25/2015.
  */
 public abstract class PlaceFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "PlaceFragment";
     Map<View, Place> placeMap = new HashMap<View, Place>();
     View mainView;
 
@@ -68,12 +72,22 @@ public abstract class PlaceFragment extends Fragment implements View.OnClickList
         // For now, can only request if place is currently available
         if (p != null && p.status == Place.Status.AVAILABLE) {
             try {
-                p.request();
-                Toast.makeText(getActivity(), "Place requested!", Toast.LENGTH_SHORT).show();
+                //fragment has access to same context that activity is running in
+                //Context has access to global SharedPreferences
+                SharedPreferences prefs = getActivity().getSharedPreferences(MyActivity.class.getSimpleName(),
+                        Context.MODE_PRIVATE);
+                String registrationId = prefs.getString(MyActivity.PROPERTY_REG_ID,"");
+                if (registrationId.isEmpty()) {
+                    Toast.makeText(getActivity(), "No registration id!", Toast.LENGTH_SHORT).show();
+                } else {
+                    p.request(registrationId);
+                    Toast.makeText(getActivity(), "Place requested!", Toast.LENGTH_SHORT).show();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
+            Log.d(TAG, "place status? " + (p == null ? "null" : p.status));
             Toast.makeText(getActivity(), "Place is not available.", Toast.LENGTH_SHORT).show();
         }
     }

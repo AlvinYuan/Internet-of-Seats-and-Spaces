@@ -3,6 +3,7 @@ package com.example.audrey.AndroidSeats;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +46,7 @@ class QueryPlaceAsyncTask extends AsyncTask<String, Integer, JSONObject> {
                         .put(new JSONObject()
                                 .put("object.object.id", new JSONObject()
                                         .put("$regex", id_prefix))));
+            Log.d(TAG, "QueryPlace request: " + activityTemplate);
             return queryASBase(activityTemplate.toString());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -90,11 +92,16 @@ class QueryPlaceAsyncTask extends AsyncTask<String, Integer, JSONObject> {
     @Override
     protected void onPostExecute(JSONObject jsonObject) {
         if (jsonObject == null) {
-            // TODO: display error message
+            if (placeFragment.getActivity() != null) {
+                Toast.makeText(placeFragment.getActivity(),
+                        "Place is not available.",
+                        Toast.LENGTH_SHORT).show();
+            }
             Log.e(TAG, "Error, no valid response!");
             return;
         }
 
+        Log.d(TAG, "QueryPlace result: " + jsonObject);
         ArrayList<String> foundPlaceIds = new ArrayList<String>();
 
         try {

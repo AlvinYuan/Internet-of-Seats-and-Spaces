@@ -104,10 +104,11 @@ public class MyActivity extends ActionBarActivity {
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
+            Log.d(TAG,"registration ID is:" + regid);
 
-//            if (regid.isEmpty()) {
+             if (regid.isEmpty()) {
                 registerInBackground();
-//            }
+             }
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
