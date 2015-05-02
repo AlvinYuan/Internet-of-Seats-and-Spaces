@@ -19,10 +19,24 @@ public abstract class PlaceFragment extends Fragment implements View.OnClickList
     View mainView;
 
     View viewForPlace(Place p) throws JSONException {
-        String[] placeIdSplit = p.id().split("/");
+        return viewForPlace(p.id());
+    }
+
+    View viewForPlace(String placeId) throws JSONException {
+        String[] placeIdSplit = placeId.split("/");
         String viewId = "seat" + placeIdSplit[placeIdSplit.length - 1];
         int resId = getResources().getIdentifier(viewId, "id", getActivity().getPackageName());
-        return mainView.findViewById(resId);
+        View v = mainView.findViewById(resId);
+        if (v != null && placeMap.containsKey(v)) {
+            // If v is already in placeMap, check its Place and make sure the placeId matches.
+            if (placeMap.get(v).id().equals(placeId)) {
+                return v;
+            } else {
+                return null;
+            }
+        } else {
+            return v;
+        }
     }
 
     // TODO: somehow distinguish between someone else's reservation and your own.

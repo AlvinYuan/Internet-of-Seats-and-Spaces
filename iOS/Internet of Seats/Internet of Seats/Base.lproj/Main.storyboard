@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Main View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="ViewController" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" customClass="MainViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -17,20 +16,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wfq-J6-M1N">
-                                <rect key="frame" x="216" y="123" width="168" height="30"/>
-                                <state key="normal" title="Send request to ASBase">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EYz-ZO-EM9">
+                                <rect key="frame" x="255" y="168" width="90" height="30"/>
+                                <state key="normal" title="send request">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="sendRequestToASBase:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="HLF-Jc-EDn"/>
+                                    <action selector="sendRequestToASBase:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="pPt-bs-ywm"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SJE-bR-oEg">
+                                <rect key="frame" x="158" y="85" width="284" height="30"/>
+                                <state key="normal" title="Allow send push notification to the phone">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="allowPushNotification:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="uJo-Px-wE0"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Wfq-J6-M1N" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="103" id="b5z-Xb-ujJ"/>
-                            <constraint firstItem="Wfq-J6-M1N" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="vto-8J-wlQ"/>
+                            <constraint firstItem="EYz-ZO-EM9" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="204-AA-2hK"/>
+                            <constraint firstItem="EYz-ZO-EM9" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="148" id="B3d-zw-tuU"/>
+                            <constraint firstItem="SJE-bR-oEg" firstAttribute="centerX" secondItem="EYz-ZO-EM9" secondAttribute="centerX" id="YTI-pB-oTe"/>
+                            <constraint firstItem="EYz-ZO-EM9" firstAttribute="top" secondItem="SJE-bR-oEg" secondAttribute="bottom" constant="53" id="zlz-in-Eib"/>
                         </constraints>
                     </view>
                 </viewController>
