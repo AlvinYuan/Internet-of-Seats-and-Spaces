@@ -80,7 +80,7 @@ def create_reservation_subscription(request):
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
 		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
-		subscription["ASTemplate"]["verb"] = { "$in": ["request"]? }
+		subscription["ASTemplate"]["verb"] = { "$in": ["request"] }
 
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
