@@ -12,8 +12,8 @@ ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
-subscription_id_deny = "IoSeatsDeniedReservationSubscription02"
-subscription_id_approve = "IoSeatsApprovedReservationSubscription02"
+subscription_id_deny = "IoSeatsDeniedReservationSubscription2"
+subscription_id_approve = "IoSeatsApprovedReservationSubscription2"
 subscription_actor_team = "IoSeats"
 
 # The end-user's app calls the /register_device endpoint, providing the following info in the POST body (required by the push module):
@@ -124,7 +124,7 @@ def reservation_result(request):
 		try:
 			print 'try to match device in db'
 			# This device is already registered.
-			if system == 'iOS':
+			if device_system == 'iOS':
 				device = APNSDevice.objects.get(registration_id=device_id)
 
 				# Alert message may only be sent as text.
@@ -205,7 +205,7 @@ def create_deny_reservation_subscription(request):
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
 		# look for DENY requests for places from our team
-		# subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
+		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
 		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
 		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
