@@ -139,7 +139,7 @@ def reservation_result(request):
 				#curr_device_id = device_json["object"]["actor"]["device_id"]
 				print "current device id: " + device_id
 				
-				device = GCMDevice.objects.get(registration_id=first_device_id)
+				device = GCMDevice.objects.get(registration_id=device_id)
 				# The first argument will be sent as "message" to the intent extras Bundle
 				# Retrieve it with intent.getExtras().getString("message")
 
