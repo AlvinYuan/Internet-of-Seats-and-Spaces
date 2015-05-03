@@ -59,6 +59,7 @@ public class MyActivity extends ActionBarActivity {
 
     // These should match how the server sends GCM messages.
     static final public String MESSAGE_KEY = "message";
+    static final public String RESULT_KEY = "result";
     static final public String PLACE_STATUS_UPDATE_MESSAGE = "Place Status Update";
     static final public String ACTIVITY_KEY = "activity";
 
@@ -395,11 +396,11 @@ public class MyActivity extends ActionBarActivity {
              */
                 if (GoogleCloudMessaging.
                         MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                    sendNotification("Send error: " + extras.toString());
+                    sendNotification("Send error: " + extras.toString(),"Error");
                 } else if (GoogleCloudMessaging.
                         MESSAGE_TYPE_DELETED.equals(messageType)) {
                     sendNotification("Deleted messages on server: " +
-                            extras.toString());
+                            extras.toString(),"Deleted messages on server");
                     // If it's a regular GCM message, do some work.
                 } else if (GoogleCloudMessaging.
                         MESSAGE_TYPE_MESSAGE.equals(messageType)) {
@@ -410,6 +411,12 @@ public class MyActivity extends ActionBarActivity {
                         intent.setAction(PLACE_STATUS_UPDATE_MESSAGE);
                         broadcaster.sendBroadcast(intent);
                         Log.d(TAG, "Locally broadcasted received intent");
+                    } else {
+                        // assume it is a general approve/deny status update.
+                        // get mesg for user and sendNotification()
+                        if (intent.hasExtra(MESSAGE_KEY) && extras.getString(MESSAGE_KEY) != null) {
+                            sendNotification(extras.getString(MESSAGE_KEY),extras.getString(RESULT_KEY));
+                        }
                     }
                 }
             }
@@ -419,7 +426,7 @@ public class MyActivity extends ActionBarActivity {
 
         // Put the message into a notification and post it.
 
-        private void sendNotification(String msg) {
+        private void sendNotification(String msg, String result) {
             mNotificationManager = (NotificationManager)
                     this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -429,7 +436,7 @@ public class MyActivity extends ActionBarActivity {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this)
                             .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle("GCM Notification")
+                            .setContentTitle(result)
                             .setStyle(new NotificationCompat.BigTextStyle()
                                     .bigText(msg))
                             .setContentText(msg);
