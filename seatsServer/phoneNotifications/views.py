@@ -96,6 +96,9 @@ def reservation_result(request):
 		print 'load json'
 		print device_json
 		device_id = device_json["device_id"]
+		new_device_id = device_json["object"]["actor"]["device_id"]
+		new_device_system = device_json["object"]["actor"]["system"]
+
 		system = device_json['system']
 		seat = device_json['seat_id']
 		result = device_json['reservation_result']
@@ -126,15 +129,16 @@ def reservation_result(request):
 				device.send_message(None, badge=1, extra={"foo": "bar"}) # Silent message with badge and added custom data.
 			else:
 				print 'try to match Android device'
-				new_device_ids = GCMDevice.objects.all()
-				device_id = new_device_ids[0].registration_id
-				print device_id
-				device = GCMDevice.objects.get(registration_id=device_id)
+				all_device_ids = GCMDevice.objects.all()
+				first_device_id = all_device_ids[0].registration_id
+				print "first device id in db: " + first_device_id
+				curr_device_id = device_json["object"]["actor"]["device_id"]
+				print "current device id: " + curr_device_id
+				
+				device = GCMDevice.objects.get(registration_id=first_device_id)
 				# The first argument will be sent as "message" to the intent extras Bundle
 				# Retrieve it with intent.getExtras().getString("message")
-				# Alert message may only be sent as text.
 
-				# If you want to customize, send an extra dict and a None message.
 				# the extras dict will be mapped into the intent extras Bundle.
 				# For dicts where all values are keys this will be sent as url parameters,
 				# but for more complex nested collections the extras dict will be sent via
@@ -197,7 +201,7 @@ def create_deny_reservation_subscription(request):
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
 		# look for DENY requests for places from our team
-		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
+		# subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
 		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
 		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
