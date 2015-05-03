@@ -94,6 +94,7 @@ def reservation_result(request):
 		print 'in request.method POST'
 		device_json = json.loads(request.body)
 		print 'load json'
+		print device_json
 		device_id = device_json["device_id"]
 		system = device_json['system']
 		seat = device_json['seat_id']
@@ -132,14 +133,14 @@ def reservation_result(request):
 				# The first argument will be sent as "message" to the intent extras Bundle
 				# Retrieve it with intent.getExtras().getString("message")
 				# Alert message may only be sent as text.
-				device.send_message("The seat reservation for " + seat + " is " + result)
 
 				# If you want to customize, send an extra dict and a None message.
 				# the extras dict will be mapped into the intent extras Bundle.
 				# For dicts where all values are keys this will be sent as url parameters,
 				# but for more complex nested collections the extras dict will be sent via
 				# the bulk message api.
-				device.send_message(None, extra={"foo": "bar"})
+				device.send_message(None, extra={"message": "The seat reservation for " + seat + " is " + result,
+				"result": result})
 			
 			print 'successfully sent push notification'
 			response_json['message'] = 'The server successfully sent push notification to devices.'
