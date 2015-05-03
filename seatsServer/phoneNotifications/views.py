@@ -12,8 +12,8 @@ ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
-subscription_id_deny = "IoSeatsDeniedReservationSubscription"
-subscription_id_approve = "IoSeatsApprovedReservationSubscription"
+subscription_id_deny = "IoSeatsDeniedReservationSubscription02"
+subscription_id_approve = "IoSeatsApprovedReservationSubscription02"
 subscription_actor_team = "IoSeats"
 
 # The end-user's app calls the /register_device endpoint, providing the following info in the POST body (required by the push module):
