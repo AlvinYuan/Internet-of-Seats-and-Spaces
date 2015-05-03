@@ -12,8 +12,8 @@ ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
-subscription_id_deny = "DeniedReservationSubscription"
-subscription_id_approve = "ApprovedReservationSubscription"
+subscription_id_deny = "IoSeatsDeniedReservationSubscription"
+subscription_id_approve = "IoSeatsApprovedReservationSubscription"
 subscription_actor_team = "IoSeats"
 
 # The end-user's app calls the /register_device endpoint, providing the following info in the POST body (required by the push module):
@@ -228,7 +228,7 @@ def create_approve_reservation_subscription(request):
 		subscription["userID"] = subscriber_id
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
-		# look for APPROVE requests for places from our team
+		# look for APPR requests for places from our team
 		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
 		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
