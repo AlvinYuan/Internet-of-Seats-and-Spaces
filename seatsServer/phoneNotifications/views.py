@@ -95,17 +95,21 @@ def reservation_result(request):
 		device_json = json.loads(request.body)
 		print 'load json'
 		print device_json
-		device_id = device_json["device_id"]
-		new_device_id = device_json["object"]["actor"]["device_id"]
-		new_device_system = device_json["object"]["actor"]["system"]
+		
+		device_id = device_json["object"]["actor"]["device_id"]
+		device_system = device_json["object"]["actor"]["system"]
+		seat = device_json["object"]["object"]["displayName"]
+		result = device_json["verb"]
 
-		system = device_json['system']
-		seat = device_json['seat_id']
-		result = device_json['reservation_result']
+		### old activity device_json ###
+		# device_id = device_json["device_id"]
+		# system = device_json['system']
+		# seat = device_json['seat_id']
+		# result = device_json['reservation_result']
 
 		print '====device info====='
 		print device_id
-		print system
+		print device_system
 		print seat
 		print result
 		print '====device info end====='
@@ -132,8 +136,8 @@ def reservation_result(request):
 				all_device_ids = GCMDevice.objects.all()
 				first_device_id = all_device_ids[0].registration_id
 				print "first device id in db: " + first_device_id
-				curr_device_id = device_json["object"]["actor"]["device_id"]
-				print "current device id: " + curr_device_id
+				#curr_device_id = device_json["object"]["actor"]["device_id"]
+				print "current device id: " + device_id
 				
 				device = GCMDevice.objects.get(registration_id=first_device_id)
 				# The first argument will be sent as "message" to the intent extras Bundle
