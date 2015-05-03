@@ -12,8 +12,8 @@ ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
-subscription_id_deny = "IoSeatsDeniedReservationSubscription3"
-subscription_id_approve = "IoSeatsApprovedReservationSubscription3"
+subscription_id_deny = "IoSeatsDeniedReservationSubscription4"
+subscription_id_approve = "IoSeatsApprovedReservationSubscription4"
 subscription_actor_team = "IoSeats"
 
 # The end-user's app calls the /register_device endpoint, providing the following info in the POST body (required by the push module):
@@ -92,14 +92,14 @@ def reservation_result(request):
 	
 	if request.method == "POST":
 		print 'in request.method POST'
-		device_json = json.loads(request.body)
+		activity_json = json.loads(request.body)
 		print 'load json'
-		print device_json
+		print activity_json
 		
-		device_id = device_json["object"]["actor"]["device_id"]
-		device_system = device_json["object"]["actor"]["system"]
-		seat = device_json["object"]["object"]["displayName"]
-		result = device_json["verb"]
+		device_id = activity_json["object"]["actor"]["device_id"]
+		device_system = activity_json["object"]["actor"]["system"]
+		seat = activity_json["object"]["object"]["displayName"]
+		result = activity_json["verb"]
 
 		### old activity device_json ###
 		# device_id = device_json["device_id"]
@@ -205,7 +205,7 @@ def create_deny_reservation_subscription(request):
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
 		# look for DENY requests for places from our team
-		# subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
+		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
 		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
 		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
@@ -237,7 +237,7 @@ def create_approve_reservation_subscription(request):
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
 		# look for APPR requests for places from our team
-		# subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
+		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
 		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
 		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
