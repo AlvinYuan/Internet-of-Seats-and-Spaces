@@ -175,7 +175,7 @@ def handle_request(request, verb):
 		activity_response = {}
 		activity_response["actor"] = {"team": "IoSeats", "displayName": "Administrator"}
 		activity_response["verb"] = verb
-		if verb == "deny" and "reason" in request.GET:
+		if "reason" in request.GET:
 			activity_response["reason"] = request.GET.get("reason")
 		activity_response["object"] = request_activity
 		activity_response["published"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
