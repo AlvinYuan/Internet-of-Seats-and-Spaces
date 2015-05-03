@@ -14,7 +14,7 @@ subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
 subscription_id_deny = "DeniedReservationSubscription"
 subscription_id_approve = "ApprovedReservationSubscription"
-subscription_actor_text = "Reservatiion Result"
+subscription_actor_team = "IoSeats"
 
 # The end-user's app calls the /register_device endpoint, providing the following info in the POST body (required by the push module):
 #
@@ -196,12 +196,11 @@ def create_deny_reservation_subscription(request):
 		subscription["userID"] = subscriber_id
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
-		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+		# look for DENY requests for places from our team
+		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
-		
-		#TODO: change subscription request to look for requests for places
-		#subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
-		#subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
+		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
+		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
 
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
@@ -229,8 +228,11 @@ def create_approve_reservation_subscription(request):
 		subscription["userID"] = subscriber_id
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
-		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+		# look for APPROVE requests for places from our team
+		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
+		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
+		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
 
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)

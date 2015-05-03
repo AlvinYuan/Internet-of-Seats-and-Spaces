@@ -80,7 +80,7 @@ def create_reservation_subscription(request):
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
 		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
-		subscription["ASTemplate"]["verb"] = { "$in": ["request"] }
+		subscription["ASTemplate"]["verb"] = { "$in": ["request"]? }
 
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
@@ -173,7 +173,7 @@ def handle_request(request, verb):
 	if request_activity:
 		request_activity = request_activity[0]
 		activity_response = {}
-		activity_response["actor"] = {"displayName": "Administrator"}
+		activity_response["actor"] = {"team": "IoSeats", "displayName": "Administrator"}
 		activity_response["verb"] = verb
 		if verb == "deny" and "reason" in request.GET:
 			activity_response["reason"] = request.GET.get("reason")
