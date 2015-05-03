@@ -205,7 +205,7 @@ def create_deny_reservation_subscription(request):
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
 		# look for DENY requests for places from our team
-		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
+		# subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
 		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
 		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
@@ -237,7 +237,7 @@ def create_approve_reservation_subscription(request):
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
 		# look for APPR requests for places from our team
-		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
+		# subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
 		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
 		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
