@@ -4,22 +4,27 @@ import android.app.Activity;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -52,6 +57,12 @@ public class MyActivity extends ActionBarActivity {
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
 
+    // These should match how the server sends GCM messages.
+    static final public String MESSAGE_KEY = "message";
+    static final public String RESULT_KEY = "result";
+    static final public String PLACE_STATUS_UPDATE_MESSAGE = "Place Status Update";
+    static final public String ACTIVITY_KEY = "activity";
+
     /**
      * Substitute you own sender ID here. This is the project number you got
      * from the API Console, as described in "Getting Started."
@@ -62,6 +73,7 @@ public class MyActivity extends ActionBarActivity {
     AtomicInteger msgId = new AtomicInteger();
     SharedPreferences prefs;
     Context context;
+    BroadcastReceiver receiver;
 
     String regid;
 
@@ -93,13 +105,33 @@ public class MyActivity extends ActionBarActivity {
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
+            Log.d(TAG,"registration ID is:" + regid);
 
-//            if (regid.isEmpty()) {
+             if (regid.isEmpty()) {
                 registerInBackground();
-//            }
+             }
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
+
+        // http://stackoverflow.com/questions/14695537/android-update-activity-ui-from-service
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "Activity received local broadcast");
+                if (intent.hasExtra(ACTIVITY_KEY)) {
+                    String s = intent.getStringExtra(ACTIVITY_KEY);
+                    try {
+                        handleMessageJson(new JSONObject(s));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.e(TAG, "No activity key found in intent");
+                    Log.e(TAG, intent.getExtras().toString());
+                }
+            }
+        };
     }
 
 
@@ -111,6 +143,19 @@ public class MyActivity extends ActionBarActivity {
         checkPlayServices();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver((receiver),
+                new IntentFilter(PLACE_STATUS_UPDATE_MESSAGE)
+        );
+    }
+
+    @Override
+    protected void onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        super.onStop();
+    }
 
     /**
      * Check the device to make sure it has the Google Play Services APK. If
@@ -310,10 +355,6 @@ public class MyActivity extends ActionBarActivity {
     //A broadcast receiver is the mechanism GCM uses to deliver messages.
 
     public static class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
-        public GcmBroadcastReceiver() {
-            super();
-        }
-
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "received message" + intent);
@@ -355,28 +396,28 @@ public class MyActivity extends ActionBarActivity {
              */
                 if (GoogleCloudMessaging.
                         MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                    sendNotification("Send error: " + extras.toString());
+                    sendNotification("Send error: " + extras.toString(),"Error");
                 } else if (GoogleCloudMessaging.
                         MESSAGE_TYPE_DELETED.equals(messageType)) {
                     sendNotification("Deleted messages on server: " +
-                            extras.toString());
+                            extras.toString(),"Deleted messages on server");
                     // If it's a regular GCM message, do some work.
                 } else if (GoogleCloudMessaging.
                         MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                    // This loop represents the service doing some work.
-                    for (int i=0; i<5; i++) {
-                        Log.i(TAG, "Working... " + (i+1)
-                                + "/5 @ " + SystemClock.elapsedRealtime());
-                        try {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException e) {
+                    Log.i(TAG, "Received: " + extras.toString());
+                    if (intent.hasExtra(MESSAGE_KEY) && extras.getString(MESSAGE_KEY).equals(PLACE_STATUS_UPDATE_MESSAGE)) {
+                        // Got a place status update. Broadcast (forward) it to the activity.
+                        LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
+                        intent.setAction(PLACE_STATUS_UPDATE_MESSAGE);
+                        broadcaster.sendBroadcast(intent);
+                        Log.d(TAG, "Locally broadcasted received intent");
+                    } else {
+                        // assume it is a general approve/deny status update.
+                        // get mesg for user and sendNotification()
+                        if (intent.hasExtra(MESSAGE_KEY) && extras.getString(MESSAGE_KEY) != null) {
+                            sendNotification(extras.getString(MESSAGE_KEY),extras.getString(RESULT_KEY));
                         }
                     }
-                    Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
-                    // Post notification of received message.
-                    // TODO: extract JSON mesesage from the Bundle and get JSON message out of bundle; access payload cleanly defined by python library or GCM
-                    sendNotification("Received: " + extras.toString());
-                    Log.i(TAG, "Received: " + extras.toString());
                 }
             }
             // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -385,7 +426,7 @@ public class MyActivity extends ActionBarActivity {
 
         // Put the message into a notification and post it.
 
-        private void sendNotification(String msg) {
+        private void sendNotification(String msg, String result) {
             mNotificationManager = (NotificationManager)
                     this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -395,7 +436,7 @@ public class MyActivity extends ActionBarActivity {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this)
                             .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle("GCM Notification")
+                            .setContentTitle(result)
                             .setStyle(new NotificationCompat.BigTextStyle()
                                     .bigText(msg))
                             .setContentText(msg);
@@ -425,6 +466,30 @@ public class MyActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    void handleMessageJson(JSONObject activity) throws JSONException {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentById(android.R.id.content);
+        Log.d(TAG, activity.toString());
+        Log.d(TAG, ActivityUtil.getPlace(activity).getString("id"));
+        Log.d(TAG, currentFragment.toString());
+        if (currentFragment instanceof PlaceFragment) {
+            PlaceFragment currentPlaceFragment = (PlaceFragment) currentFragment;
+            View v = currentPlaceFragment.viewForPlace(ActivityUtil.getPlace(activity).getString("id"));
+            // view can be null if the current fragment does not have the place that was updated in the message
+            if (v != null) {
+                Log.d(TAG, v.toString());
+                Place p = currentPlaceFragment.placeMap.get(v);
+                p.updateStatus(activity);
+                currentPlaceFragment.refreshViewForPlace(p);
+            } else {
+                Log.d(TAG, "No view found for id");
+            }
+        } else {
+            Log.e(getClass().getSimpleName(), "Current Fragment is not Place Fragment");
+        }
+//            sendNotification("Received: " + activity.toString());
     }
 }
 

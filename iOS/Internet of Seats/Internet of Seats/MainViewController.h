@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface MainViewController : UIViewController
 
 - (IBAction)sendRequestToASBase:(id)sender;
+- (IBAction)allowPushNotification:(id)sender;
+
+- (void)sendDeviceToken:(NSString *)deviceToken;
 
 @end
 

@@ -12,9 +12,9 @@ ASBase_url = "http://russet.ischool.berkeley.edu:8080"
 
 subscriber_id = "Seating Reservation Result Notification System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/reservation_result/"
-subscription_id_deny = "DeniedReservationSubscription"
-subscription_id_approve = "ApprovedReservationSubscription"
-subscription_actor_text = "Reserversion Result"
+subscription_id_deny = "IoSeatsDeniedReservationSubscription4"
+subscription_id_approve = "IoSeatsApprovedReservationSubscription4"
+subscription_actor_team = "IoSeats"
 
 # The end-user's app calls the /register_device endpoint, providing the following info in the POST body (required by the push module):
 #
@@ -80,6 +80,8 @@ def register_device(request):
 # Handler for our callback endpoint (subscriber_url) we registered with AS.
 # TODO: 
 # 2. add the field to new_request response to specify the device
+
+# ANDROID
 # to hit the server, type into terminal:
 # curl -X POST -H "Content-Type: application/json"   -d '{"device_id":"APA91bEKvxn-y2oGlUDvGEZw9cpDCHYS0AukuelvEd2taXEMpZ7rMKJQfiYPK_viwuI19kCTOkj3JKBQBPFjb6w4WDeD1696U_G7picM0yKZ027a3tuVeyZ7_LdVAqrUe0GiRGv25sNpZe5DplbC5yRYAK9LL3_KeA", "system":"Android", "seat_id":"NameOfSeat", "reservation_result":"available"}' http://serene-wave-9290.herokuapp.com/reservation_result/
 
@@ -90,16 +92,24 @@ def reservation_result(request):
 	
 	if request.method == "POST":
 		print 'in request.method POST'
-		device_json = json.loads(request.body)
+		activity_json = json.loads(request.body)
 		print 'load json'
-		device_id = device_json["device_id"]
-		system = device_json['system']
-		seat = device_json['seat_id']
-		result = device_json['reservation_result']
+		print activity_json
+		
+		device_id = activity_json["object"]["actor"]["device_id"]
+		device_system = activity_json["object"]["actor"]["system"]
+		seat = activity_json["object"]["object"]["displayName"]
+		result = activity_json["verb"]
+
+		### old activity device_json ###
+		# device_id = device_json["device_id"]
+		# system = device_json['system']
+		# seat = device_json['seat_id']
+		# result = device_json['reservation_result']
 
 		print '====device info====='
 		print device_id
-		print system
+		print device_system
 		print seat
 		print result
 		print '====device info end====='
@@ -114,7 +124,7 @@ def reservation_result(request):
 		try:
 			print 'try to match device in db'
 			# This device is already registered.
-			if system == 'iOS':
+			if device_system == 'iOS':
 				device = APNSDevice.objects.get(registration_id=device_id)
 
 				# Alert message may only be sent as text.
@@ -123,21 +133,22 @@ def reservation_result(request):
 				device.send_message(None, badge=1, extra={"foo": "bar"}) # Silent message with badge and added custom data.
 			else:
 				print 'try to match Android device'
-				new_device_ids = GCMDevice.objects.all()
-				device_id = new_device_ids[0].registration_id
-				print device_id
+				all_device_ids = GCMDevice.objects.all()
+				first_device_id = all_device_ids[0].registration_id
+				print "first device id in db: " + first_device_id
+				#curr_device_id = device_json["object"]["actor"]["device_id"]
+				print "current device id: " + device_id
+				
 				device = GCMDevice.objects.get(registration_id=device_id)
 				# The first argument will be sent as "message" to the intent extras Bundle
 				# Retrieve it with intent.getExtras().getString("message")
-				# Alert message may only be sent as text.
-				device.send_message("The seat reservation for " + seat + " is " + result)
 
-				# If you want to customize, send an extra dict and a None message.
 				# the extras dict will be mapped into the intent extras Bundle.
 				# For dicts where all values are keys this will be sent as url parameters,
 				# but for more complex nested collections the extras dict will be sent via
 				# the bulk message api.
-				device.send_message(None, extra={"foo": "bar"})
+				device.send_message(None, extra={"message": "The seat reservation for " + seat + " is " + result,
+				"result": result})
 			
 			print 'successfully sent push notification'
 			response_json['message'] = 'The server successfully sent push notification to devices.'
@@ -193,8 +204,11 @@ def create_deny_reservation_subscription(request):
 		subscription["userID"] = subscriber_id
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
-		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+		# look for DENY requests for places from our team
+		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
+		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
+		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
 
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
@@ -222,8 +236,11 @@ def create_approve_reservation_subscription(request):
 		subscription["userID"] = subscriber_id
 		subscription["subscriptionID"] = subscription_id
 		subscription["ASTemplate"] = {}
-		subscription["ASTemplate"]["object.displayName"] = { "$regex":  ".*" + subscription_actor_text + ".*" }
+		# look for APPR requests for places from our team
+		subscription["ASTemplate"]["actor.team"] = { "$in":  [ subscription_actor_team ] }
 		subscription["ASTemplate"]["verb"] = { "$in": [verb] }
+		subscription["ASTemplate"]["object.verb"] = { "$in": ["request"] }
+		subscription["ASTemplate"]["object.object.objectType"] = { "$in": ["place"] }
 
 		headers = {'Content-Type': 'application/json'}
 		r = requests.post (subscription_url, data=json.dumps(subscription), headers=headers)
