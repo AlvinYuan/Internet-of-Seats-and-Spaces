@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import reservations.views
 import phoneNotifications.views
+import bartChairs.views
 
 urlpatterns = patterns('',
     # Examples:
@@ -20,10 +21,18 @@ urlpatterns = patterns('',
     url(r'^request/(?P<verb>approve|deny)/', reservations.views.handle_request, name='handle_request'),
     # Simulate Chair
     url(r'^post_chair_update/', reservations.views.post_chair_update, name='post_chair_update'),
+
+    # Reservations BART
+    url(r'^new_request_bart/', bartChairs.views.new_request_bart, name='new_request_bart'),
+    url(r'^create_subscriber_bart/', bartChairs.views.create_subscriber_bart, name='create_subscriber_bart'),
+    # subscribe to train record:
+    url(r'^create_reservation_subscription_bart/', bartChairs.views.create_reservation_subscription_bart, name='create_reservation_subscription_bart'),
+    
     # Phone Notifications
     url(r'^register_device/', phoneNotifications.views.register_device, name='register_device'),
     url(r'^reservation_result/', phoneNotifications.views.reservation_result, name='reservation_result'),
     url(r'^create_phone_notifications_subscriber/', phoneNotifications.views.create_phone_notifications_subscriber, name='create_phone_notifications_subscriber'),
     url(r'^create_deny_reservation_subscription/', phoneNotifications.views.create_deny_reservation_subscription, name='create_deny_reservation_subscription'),
     url(r'^create_approve_reservation_subscription/', phoneNotifications.views.create_approve_reservation_subscription, name='create_approve_reservation_subscription'),
+                       
 )
