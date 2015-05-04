@@ -101,38 +101,78 @@ static NSString * const kObjectTypePlace = @"place";
 
 - (void)processChairStatus:(NSDictionary*) queryResult{
     NSArray *items = queryResult[@"items"];
-    NSMutableArray *chairs = [[NSMutableArray alloc] init];
+    NSMutableArray *chairsStatus = [[NSMutableArray alloc] init];
+    NSMutableArray *chairsRequests = [[NSMutableArray alloc] init];
+    NSMutableArray *chairsResult = [[NSMutableArray alloc] init];
+    
+    
     for (NSDictionary *query in items) {
         if ([query objectForKey:@"verb"]) {
             NSString *verb = [query objectForKey:@"verb"];
             
-            if ([verb isEqualToString:@"checkin"] || [verb isEqualToString:@"leave"] || [verb isEqualToString:kVerbReqeust]) {
+            if ([verb isEqualToString:@"checkin"] || [verb isEqualToString:@"leave"]) {
                 ChairStatusModel *chairStatusModel = [self dictToChairStatusModel:query];
-                [chairs addObject:chairStatusModel];
+                [chairsStatus addObject:chairStatusModel];
+            }
+            else if ([verb isEqualToString:kVerbReqeust]) {
+                ChairStatusModel *chairStatusModel = [self dictToChairStatusModel:query];
+                [chairsRequests addObject:chairStatusModel];
             }
 //            else if ([verb isEqualToString:@"cancel"]) {
 //            }
             else if ([verb isEqualToString:@"deny"] || [verb isEqualToString:@"approve"]) {
                 ChairResultModel *chairResultModel = [self dictToChairResultModel:query];
-                [chairs addObject:chairResultModel];
+                [chairsResult addObject:chairResultModel];
             }
-            
-//            if ([query objectForKey:@"object"]) {
-//                NSDictionary *object = [query objectForKey:@"object"];
-//                if ([object objectForKey:@"descriptor-tags"]) {
-//                    NSArray *tags = [object objectForKey:@"descriptor-tags"];
-//                    if ([tags containsObject:@"chair"]) {
-//                        [chairs addObject:query];
-//                    }
-//                }
-//            }
+        }
+    }
+    
+    NSMutableDictionary *uniqueChairs = [[NSMutableDictionary alloc] init];
+    for (ChairStatusModel* chairStatusModel in chairsStatus) {
+        if ([uniqueChairs objectForKey:chairStatusModel.object.displayName]) {
+            ChairModel *chairModel = uniqueChairs[chairStatusModel.object.displayName];
+            if ([self compareDate:chairModel.published earlierThan:chairStatusModel.published]) {
+                uniqueChairs[chairStatusModel.object.displayName] = (ChairModel*) chairStatusModel;
+            }
+        }
+        else {
+            uniqueChairs[chairStatusModel.object.displayName] = (ChairModel*) chairStatusModel;
+        }
+    }
+    
+    for (ChairResultModel* chairResultModel in chairsResult) {
+        if ([uniqueChairs objectForKey:chairResultModel.object.object.displayName]) {
+            ChairModel *chairModel = uniqueChairs[chairResultModel.object.object.displayName];
+            if ([self compareDate:chairModel.published earlierThan:chairResultModel.published]) {
+                uniqueChairs[chairResultModel.object.object.displayName] = (ChairModel*) chairResultModel;
+            }        }
+        else {
+            uniqueChairs[chairResultModel.object.object.displayName] = (ChairModel*) chairResultModel;
         }
     }
 
     
     ChairViewController *chairViewController = self.viewControllers[0];
-    [chairViewController setChairs:chairs];
+    [chairViewController setChairs:uniqueChairs];
 //    [self showChairStatus:requests];
+}
+
+- (NSDate*)stringToDate:(NSString*)string {
+    NSString *dateStr = [string substringToIndex:18];
+    // 2015-05-03T01:34:15.000Z
+    // Convert string to date object
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+//    [dateFormat setDateFormat:@"EE, d LLLL yyyy HH:mm:ss Z"];
+//    [dateFormat setDateFormat:@"yyyy-MM-d'T'HH:mm:ssZZZZZ"];
+    [dateFormat setDateFormat:@"yyyy-MM-d'T'HH:mm:ss"];
+    NSDate *date = [dateFormat dateFromString:dateStr];
+    return date;
+}
+
+- (BOOL)compareDate:(NSString*)dateStr1 earlierThan:(NSString*)dateStr2 {
+    NSDate* date1 = [self stringToDate:dateStr1];
+    NSDate* date2 = [self stringToDate:dateStr2];
+    return [date1 compare:date2] == NSOrderedAscending;
 }
 
 - (ChairModel*)dictToChairModel:(NSDictionary*) data {
@@ -166,7 +206,7 @@ static NSString * const kObjectTypePlace = @"place";
 }
 
 - (ChairResultModel*)dictToChairResultModel:(NSDictionary*) data {
-    ChairResultModel *chairModel = [[ChairResultModel alloc] initWithChairModel:[self dictToChairModel:data]];
+    ChairResultModel *chairModel = [[ChairResultModel alloc] initWithChairModel:[self dictToChairStatusModel:data]];
     
     if ([data objectForKey:@"object"]) {
         chairModel.object = [self dictToChairStatusModel:[data objectForKey:@"object"]];

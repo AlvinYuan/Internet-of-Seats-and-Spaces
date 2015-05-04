@@ -12,6 +12,6 @@
 @interface ChairViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) MainViewController *delegateController;
-@property (strong, nonatomic) NSArray *chairs;
+@property (strong, nonatomic) NSDictionary *chairs;
 
 @end

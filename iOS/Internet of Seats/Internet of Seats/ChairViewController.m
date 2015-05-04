@@ -33,7 +33,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
-    NSDictionary *chairStatus = self.chairs[indexPath.row];
+//    NSDictionary *chairStatus = self.chairs[indexPath.row];
     
     
     cell.textLabel.text = @"";

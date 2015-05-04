@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import "ChairModel.h"
+#import "ChairStatusModel.h"
 
 @interface ChairResultModel : ChairModel
 
-@property (strong, nonatomic) ChairModel* object;
+@property (strong, nonatomic) ChairStatusModel* object;
 
 - (id)initWithChairModel:(ChairModel *)chair;
 
