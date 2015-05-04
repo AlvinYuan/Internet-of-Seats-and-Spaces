@@ -16,7 +16,21 @@
 @implementation AppDelegate
 
 
+static NSString * const kPushServerHost = @"http://serene-wave-9290.herokuapp.com";
+static NSString * const kRegisterDevicePath = @"/register_device/";
+
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Register for Remote Notifications
+    if([[UIApplication sharedApplication]  respondsToSelector:@selector(registerUserNotificationSettings:)]){
+        UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+        [[UIApplication sharedApplication]  registerUserNotificationSettings:settings];
+        [[UIApplication sharedApplication]  registerForRemoteNotifications];
+    }
+    else {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert| UIRemoteNotificationTypeBadge |  UIRemoteNotificationTypeSound)];
+    }
     return YES;
 }
 
@@ -29,7 +43,7 @@
      ntohl(tokenBytes[3]), ntohl(tokenBytes[4]), ntohl(tokenBytes[5]),
      ntohl(tokenBytes[6]), ntohl(tokenBytes[7])];
     
-    [self.viewController sendDeviceToken:iOSDeviceToken];
+    [self sendDeviceToken:iOSDeviceToken];
     NSLog(@"Did Register for Remote Notifications with Device Token (%@)", deviceToken);
 }
 
@@ -38,6 +52,40 @@
     NSLog(@"Did Fail to Register for Remote Notifications");
     NSLog(@"%@, %@", error, error.localizedDescription);
     
+}
+
+- (void)sendDeviceToken:(NSString *)deviceToken {
+    // Send device token to push server
+    dispatch_queue_t globalQ = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    dispatch_async(globalQ, ^{
+        NSDictionary *params = @{
+                                 @"device_token":deviceToken,
+                                 @"system":@"iOS",
+                                 };
+        
+        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:nil];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kPushServerHost, kRegisterDevicePath]];
+        NSMutableURLRequest *searchRequest = [NSMutableURLRequest requestWithURL:url];
+        [searchRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [searchRequest setHTTPMethod:@"POST"];
+        [searchRequest setHTTPBody:jsonData];
+        
+        
+        NSURLSession *session = [NSURLSession sharedSession];
+        [[session dataTaskWithRequest:searchRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+            
+            if (!error && httpResponse.statusCode == 200) {
+                NSLog(@"Success: send device token");
+                
+            } else {
+                NSLog(@"Fail:%ld", (long)httpResponse.statusCode);
+            }
+        }] resume];
+        
+    });
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

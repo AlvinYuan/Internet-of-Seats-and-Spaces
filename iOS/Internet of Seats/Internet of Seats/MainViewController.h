@@ -8,12 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MainViewController : UIViewController
+@interface MainViewController : UITabBarController
 
-- (IBAction)sendRequestToASBase:(id)sender;
-- (IBAction)allowPushNotification:(id)sender;
-
-- (void)sendDeviceToken:(NSString *)deviceToken;
+@property (assign, nonatomic) int testV;
 
 @end
 

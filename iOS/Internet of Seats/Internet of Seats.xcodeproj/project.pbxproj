@@ -14,6 +14,15 @@
 		B658445D1ABCC087007DD625 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B658445C1ABCC087007DD625 /* Images.xcassets */; };
 		B65844601ABCC087007DD625 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B658445E1ABCC087007DD625 /* LaunchScreen.xib */; };
 		B658446C1ABCC087007DD625 /* Internet_of_SeatsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B658446B1ABCC087007DD625 /* Internet_of_SeatsTests.m */; };
+		B68E0F561AF7688E002963C5 /* BartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F551AF7688E002963C5 /* BartViewController.m */; };
+		B68E0F5C1AF76C24002963C5 /* ChairViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F5B1AF76C24002963C5 /* ChairViewController.m */; };
+		B68E0F601AF7768A002963C5 /* ChairModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F3B1AF756E4002963C5 /* ChairModel.m */; };
+		B68E0F611AF7768A002963C5 /* ActorModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F3E1AF75955002963C5 /* ActorModel.m */; };
+		B68E0F621AF7768A002963C5 /* ProviderModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F411AF7598F002963C5 /* ProviderModel.m */; };
+		B68E0F631AF7768A002963C5 /* ObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F441AF759E2002963C5 /* ObjectModel.m */; };
+		B68E0F641AF7768A002963C5 /* AddressModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F471AF75A9B002963C5 /* AddressModel.m */; };
+		B68E0F671AF77D85002963C5 /* ChairResultModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F661AF77D85002963C5 /* ChairResultModel.m */; };
+		B68E0F6A1AF77DEC002963C5 /* ChairStatusModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F691AF77DEC002963C5 /* ChairStatusModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +49,24 @@
 		B65844651ABCC087007DD625 /* Internet of SeatsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Internet of SeatsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B658446A1ABCC087007DD625 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B658446B1ABCC087007DD625 /* Internet_of_SeatsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Internet_of_SeatsTests.m; sourceTree = "<group>"; };
+		B68E0F3A1AF756E4002963C5 /* ChairModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChairModel.h; path = Models/ChairModel.h; sourceTree = "<group>"; };
+		B68E0F3B1AF756E4002963C5 /* ChairModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChairModel.m; path = Models/ChairModel.m; sourceTree = "<group>"; };
+		B68E0F3D1AF75955002963C5 /* ActorModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorModel.h; path = Models/ActorModel.h; sourceTree = "<group>"; };
+		B68E0F3E1AF75955002963C5 /* ActorModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ActorModel.m; path = Models/ActorModel.m; sourceTree = "<group>"; };
+		B68E0F401AF7598F002963C5 /* ProviderModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProviderModel.h; path = Models/ProviderModel.h; sourceTree = "<group>"; };
+		B68E0F411AF7598F002963C5 /* ProviderModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProviderModel.m; path = Models/ProviderModel.m; sourceTree = "<group>"; };
+		B68E0F431AF759E2002963C5 /* ObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectModel.h; path = Models/ObjectModel.h; sourceTree = "<group>"; };
+		B68E0F441AF759E2002963C5 /* ObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectModel.m; path = Models/ObjectModel.m; sourceTree = "<group>"; };
+		B68E0F461AF75A9B002963C5 /* AddressModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddressModel.h; path = Models/AddressModel.h; sourceTree = "<group>"; };
+		B68E0F471AF75A9B002963C5 /* AddressModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddressModel.m; path = Models/AddressModel.m; sourceTree = "<group>"; };
+		B68E0F541AF7688E002963C5 /* BartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BartViewController.h; sourceTree = "<group>"; };
+		B68E0F551AF7688E002963C5 /* BartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BartViewController.m; sourceTree = "<group>"; };
+		B68E0F5A1AF76C24002963C5 /* ChairViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChairViewController.h; sourceTree = "<group>"; };
+		B68E0F5B1AF76C24002963C5 /* ChairViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChairViewController.m; sourceTree = "<group>"; };
+		B68E0F651AF77D85002963C5 /* ChairResultModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChairResultModel.h; path = Models/ChairResultModel.h; sourceTree = "<group>"; };
+		B68E0F661AF77D85002963C5 /* ChairResultModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChairResultModel.m; path = Models/ChairResultModel.m; sourceTree = "<group>"; };
+		B68E0F681AF77DEC002963C5 /* ChairStatusModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChairStatusModel.h; path = Models/ChairStatusModel.h; sourceTree = "<group>"; };
+		B68E0F691AF77DEC002963C5 /* ChairStatusModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChairStatusModel.m; path = Models/ChairStatusModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,9 +112,14 @@
 				B65844541ABCC087007DD625 /* AppDelegate.m */,
 				B65844561ABCC087007DD625 /* MainViewController.h */,
 				B65844571ABCC087007DD625 /* MainViewController.m */,
+				B68E0F5A1AF76C24002963C5 /* ChairViewController.h */,
+				B68E0F5B1AF76C24002963C5 /* ChairViewController.m */,
+				B68E0F541AF7688E002963C5 /* BartViewController.h */,
+				B68E0F551AF7688E002963C5 /* BartViewController.m */,
 				B65844591ABCC087007DD625 /* Main.storyboard */,
 				B658445C1ABCC087007DD625 /* Images.xcassets */,
 				B658445E1ABCC087007DD625 /* LaunchScreen.xib */,
+				B68E0F391AF75672002963C5 /* Models */,
 				B658444F1ABCC087007DD625 /* Supporting Files */,
 			);
 			path = "Internet of Seats";
@@ -117,6 +149,27 @@
 				B658446A1ABCC087007DD625 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B68E0F391AF75672002963C5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B68E0F3A1AF756E4002963C5 /* ChairModel.h */,
+				B68E0F3B1AF756E4002963C5 /* ChairModel.m */,
+				B68E0F681AF77DEC002963C5 /* ChairStatusModel.h */,
+				B68E0F691AF77DEC002963C5 /* ChairStatusModel.m */,
+				B68E0F651AF77D85002963C5 /* ChairResultModel.h */,
+				B68E0F661AF77D85002963C5 /* ChairResultModel.m */,
+				B68E0F3D1AF75955002963C5 /* ActorModel.h */,
+				B68E0F3E1AF75955002963C5 /* ActorModel.m */,
+				B68E0F401AF7598F002963C5 /* ProviderModel.h */,
+				B68E0F411AF7598F002963C5 /* ProviderModel.m */,
+				B68E0F431AF759E2002963C5 /* ObjectModel.h */,
+				B68E0F441AF759E2002963C5 /* ObjectModel.m */,
+				B68E0F461AF75A9B002963C5 /* AddressModel.h */,
+				B68E0F471AF75A9B002963C5 /* AddressModel.m */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,7 +272,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B68E0F671AF77D85002963C5 /* ChairResultModel.m in Sources */,
+				B68E0F601AF7768A002963C5 /* ChairModel.m in Sources */,
+				B68E0F6A1AF77DEC002963C5 /* ChairStatusModel.m in Sources */,
+				B68E0F611AF7768A002963C5 /* ActorModel.m in Sources */,
+				B68E0F621AF7768A002963C5 /* ProviderModel.m in Sources */,
+				B68E0F631AF7768A002963C5 /* ObjectModel.m in Sources */,
+				B68E0F641AF7768A002963C5 /* AddressModel.m in Sources */,
 				B65844581ABCC087007DD625 /* MainViewController.m in Sources */,
+				B68E0F5C1AF76C24002963C5 /* ChairViewController.m in Sources */,
+				B68E0F561AF7688E002963C5 /* BartViewController.m in Sources */,
 				B65844551ABCC087007DD625 /* AppDelegate.m in Sources */,
 				B65844521ABCC087007DD625 /* main.m in Sources */,
 			);
@@ -347,6 +409,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Internet\\ of\\ Seats/JSONModel/**";
 			};
 			name = Debug;
 		};
@@ -358,6 +421,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Internet\\ of\\ Seats/JSONModel/**";
 			};
 			name = Release;
 		};
