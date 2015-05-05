@@ -5,50 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
     </dependencies>
     <scenes>
-        <!--Main View Controller-->
-        <scene sceneID="ufC-wZ-h7g">
-            <objects>
-                <viewController id="vXZ-lx-hvc" customClass="MainViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
-                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EYz-ZO-EM9">
-                                <rect key="frame" x="255" y="168" width="90" height="30"/>
-                                <state key="normal" title="send request">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="sendRequestToASBase:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="pPt-bs-ywm"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SJE-bR-oEg">
-                                <rect key="frame" x="158" y="85" width="284" height="30"/>
-                                <state key="normal" title="Allow send push notification to the phone">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="allowPushNotification:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="uJo-Px-wE0"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="EYz-ZO-EM9" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="204-AA-2hK"/>
-                            <constraint firstItem="EYz-ZO-EM9" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="148" id="B3d-zw-tuU"/>
-                            <constraint firstItem="SJE-bR-oEg" firstAttribute="centerX" secondItem="EYz-ZO-EM9" secondAttribute="centerX" id="YTI-pB-oTe"/>
-                            <constraint firstItem="EYz-ZO-EM9" firstAttribute="top" secondItem="SJE-bR-oEg" secondAttribute="bottom" constant="53" id="zlz-in-Eib"/>
-                        </constraints>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
-            </objects>
-        </scene>
-        <!--Item 2-->
+        <!--BART-->
         <scene sceneID="7YJ-9n-1n3">
             <objects>
                 <viewController id="H94-ww-dek" customClass="BartViewController" sceneMemberID="viewController">
@@ -61,16 +18,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 2" id="rsU-OR-4OO"/>
+                    <tabBarItem key="tabBarItem" title="BART" id="rsU-OR-4OO"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WsN-bK-Ic9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1290" y="1199"/>
         </scene>
-        <!--Item 1-->
+        <!--FSM-->
         <scene sceneID="5Zp-Hs-hj6">
             <objects>
-                <viewController id="wYa-i6-tyf" customClass="FSMViewController" sceneMemberID="viewController">
+                <viewController title="FSM" id="wYa-i6-tyf" customClass="FSMViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="RnX-Xp-f5Z"/>
                         <viewControllerLayoutGuide type="bottom" id="CzH-8G-OER"/>
@@ -80,7 +37,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 1" id="j60-FM-NjY"/>
+                    <tabBarItem key="tabBarItem" title="FSM" id="j60-FM-NjY"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vaw-0J-DhL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
