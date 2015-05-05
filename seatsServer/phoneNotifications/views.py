@@ -127,10 +127,6 @@ def reservation_result(request):
 			if device_system == 'iOS':
 				device = APNSDevice.objects.get(registration_id=device_id)
 
-				# Alert message may only be sent as text.
-				device.send_message("The seat reservation for " + seat + " is " + result)
-				device.send_message(None, badge=5) # No alerts but with badge.
-				device.send_message(None, badge=1, extra={"foo": "bar"}) # Silent message with badge and added custom data.
 			else:
 				print 'try to match Android device'
 				all_device_ids = GCMDevice.objects.all()
@@ -147,8 +143,8 @@ def reservation_result(request):
 				# For dicts where all values are keys this will be sent as url parameters,
 				# but for more complex nested collections the extras dict will be sent via
 				# the bulk message api.
-				device.send_message(None, extra={"message": "The seat reservation for " + seat + " is " + result,
-				"result": result})
+				
+			device.send_message(None, extra={"message": "The seat reservation for " + seat + " is " + result, "result": result})
 			
 			print 'successfully sent push notification'
 			response_json['message'] = 'The server successfully sent push notification to devices.'

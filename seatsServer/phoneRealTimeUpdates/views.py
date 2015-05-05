@@ -32,8 +32,7 @@ def place_status_update(request):
 
 		# Currently just forwards activity to the phone and has phone deal with updating logic.
 		# Can instead send a custom message and have some logic on the server to reduce payload size and phone logic.
-		ios_devices.send_message("Place Status Update")
-		ios_devices.send_message(None, badge=1, extra=activity_json)
+		ios_devices.send_message(None, extra={"message": "Place Status Update", "activity": activity_json})
 		android_devices.send_message(None, extra={"message": "Place Status Update", "activity": activity_json})
 
 		response_json['message'] = 'The server sent push notification to ' + str(len(ios_devices) + len(android_devices)) + ' devices.'
