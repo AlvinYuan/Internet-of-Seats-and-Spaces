@@ -12,5 +12,6 @@
 @interface BartViewController : UIViewController
 
 @property (weak, nonatomic) MainViewController *delegateController;
+@property (strong, nonatomic) NSDictionary *chairs;
 
 @end

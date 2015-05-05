@@ -59,12 +59,6 @@
                     <view key="view" contentMode="scaleToFill" id="v9A-r0-4FB">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="HIa-nn-8L8">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </tableView>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Item 2" id="rsU-OR-4OO"/>
@@ -76,7 +70,7 @@
         <!--Item 1-->
         <scene sceneID="5Zp-Hs-hj6">
             <objects>
-                <viewController id="wYa-i6-tyf" customClass="ChairViewController" sceneMemberID="viewController">
+                <viewController id="wYa-i6-tyf" customClass="FSMViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="RnX-Xp-f5Z"/>
                         <viewControllerLayoutGuide type="bottom" id="CzH-8G-OER"/>
@@ -84,16 +78,6 @@
                     <view key="view" contentMode="scaleToFill" id="3Oe-ga-2uA">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="oiD-eJ-l4d">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <connections>
-                                    <outlet property="dataSource" destination="wYa-i6-tyf" id="jSg-So-RDF"/>
-                                    <outlet property="delegate" destination="wYa-i6-tyf" id="0aO-ci-Lfn"/>
-                                </connections>
-                            </tableView>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Item 1" id="j60-FM-NjY"/>

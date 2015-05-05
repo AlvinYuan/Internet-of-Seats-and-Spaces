@@ -7,14 +7,12 @@
 //
 
 #import "MainViewController.h"
-#import "ChairViewController.h"
-//#import "FSMViewController.h"
+#import "FSMViewController.h"
 #import "BartViewController.h"
-//#import "QueryResultModel.h"
-#import "ChairStatusModel.h"
-#import "ChairResultModel.h"
 
 @interface MainViewController ()
+
+@property (strong, nonatomic) NSArray *allowedVerbs;
 
 @end
 
@@ -23,10 +21,20 @@ static NSString * const kChairStatusDownloaded = @"chairStatusDownloaded";
 static NSString * const kASBaseHost = @"http://russet.ischool.berkeley.edu:8080";
 static NSString * const kActivityPath = @"/activities";
 static NSString * const kQueryPath = @"/query";
+static NSString * const kVerbCheckin = @"checkin";
+static NSString * const kVerbLeave = @"leave";
 static NSString * const kVerbReqeust = @"request";
+static NSString * const kVerbApprove = @"approve";
+static NSString * const kVerbDeny = @"deny";
 
 static NSString * const kObjectTypePerson = @"person";
 static NSString * const kObjectTypePlace = @"place";
+
+typedef enum {
+    AVAILABLE,
+    REQUESTED,
+    TAKEN
+} ChairStatus;
 
 
 @implementation MainViewController
@@ -34,18 +42,13 @@ static NSString * const kObjectTypePlace = @"place";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.testV = 5;
+    self.allowedVerbs = @[kVerbCheckin, kVerbLeave, kVerbReqeust, kVerbApprove, kVerbDeny];
     
-//    ChairViewController *chairViewController = self.viewControllers[0];
-//    BartViewController *bartViewController = self.viewControllers[1];
-//    
-//    chairViewController.delegateController = self;
-//    bartViewController.delegateController = self;
-
-    for (ChairViewController *viewController in self.viewControllers) {
-        viewController.delegateController = self;
-    }
+    FSMViewController *chairViewController = self.viewControllers[0];
+    BartViewController *bartViewController = self.viewControllers[1];
     
+    chairViewController.delegateController = self;
+    bartViewController.delegateController = self;
     
     // Download initial chair status
     [self downloadInitialChairStatus];
@@ -58,7 +61,6 @@ static NSString * const kObjectTypePlace = @"place";
     [userDefaults synchronize];
     
     if(![userDefaults boolForKey:kChairStatusDownloaded]) {
-        // Send device token to push server
         dispatch_queue_t globalQ = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         
         dispatch_async(globalQ, ^{
@@ -75,20 +77,13 @@ static NSString * const kObjectTypePlace = @"place";
                 
                 if (!error && httpResponse.statusCode == 200) {
                     NSLog(@"Success: succuss download inital chair status");
-//                    NSArray *queryResults = [QueryResultModel arrayOfModelsFromData:data error:&error];
-//                    
-//                    QueryResultModel *queryResultModel = nil;
-//                    if ([queryResults count] != 0) {
-//                        queryResultModel = queryResults[0];
-//                        [self processChairStatus: queryResultModel];
-//                    }
-                    
                     
                     NSMutableDictionary *innerJson = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
                     [self processChairStatus: innerJson];
                     
 //                    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 //                    [userDefaults setBool:kChairStatusDownloaded forKey:true];
+//                    [userDefaults synchronize];
                     
                 } else {
                     NSLog(@"Fail:%ld", (long)httpResponse.statusCode);
@@ -100,70 +95,128 @@ static NSString * const kObjectTypePlace = @"place";
 }
 
 - (void)processChairStatus:(NSDictionary*) queryResult{
-    NSArray *items = queryResult[@"items"];
-    NSMutableArray *chairsStatus = [[NSMutableArray alloc] init];
-    NSMutableArray *chairsRequests = [[NSMutableArray alloc] init];
-    NSMutableArray *chairsResult = [[NSMutableArray alloc] init];
+    NSArray *allChairsStatus = [self retrieveAllChairStatus: [queryResult objectForKey:@"items"]];
+    NSDictionary *latestChairStatus = [self latestChairStatus: allChairsStatus];
+    NSDictionary *categorizedChairs = [self categorizeChairs:latestChairStatus];
     
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:categorizedChairs[@"FSM"]] forKey:@"FSM"];
+    [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:categorizedChairs[@"BART"]]  forKey:@"BART"];
+    [userDefaults synchronize];
     
-    for (NSDictionary *query in items) {
-        if ([query objectForKey:@"verb"]) {
-            NSString *verb = [query objectForKey:@"verb"];
-            
-            if ([verb isEqualToString:@"checkin"] || [verb isEqualToString:@"leave"]) {
-                ChairStatusModel *chairStatusModel = [self dictToChairStatusModel:query];
-                [chairsStatus addObject:chairStatusModel];
-            }
-            else if ([verb isEqualToString:kVerbReqeust]) {
-                ChairStatusModel *chairStatusModel = [self dictToChairStatusModel:query];
-                [chairsRequests addObject:chairStatusModel];
-            }
-//            else if ([verb isEqualToString:@"cancel"]) {
-//            }
-            else if ([verb isEqualToString:@"deny"] || [verb isEqualToString:@"approve"]) {
-                ChairResultModel *chairResultModel = [self dictToChairResultModel:query];
-                [chairsResult addObject:chairResultModel];
-            }
-        }
-    }
-    
-    NSMutableDictionary *uniqueChairs = [[NSMutableDictionary alloc] init];
-    for (ChairStatusModel* chairStatusModel in chairsStatus) {
-        if ([uniqueChairs objectForKey:chairStatusModel.object.displayName]) {
-            ChairModel *chairModel = uniqueChairs[chairStatusModel.object.displayName];
-            if ([self compareDate:chairModel.published earlierThan:chairStatusModel.published]) {
-                uniqueChairs[chairStatusModel.object.displayName] = (ChairModel*) chairStatusModel;
-            }
-        }
-        else {
-            uniqueChairs[chairStatusModel.object.displayName] = (ChairModel*) chairStatusModel;
-        }
-    }
-    
-    for (ChairResultModel* chairResultModel in chairsResult) {
-        if ([uniqueChairs objectForKey:chairResultModel.object.object.displayName]) {
-            ChairModel *chairModel = uniqueChairs[chairResultModel.object.object.displayName];
-            if ([self compareDate:chairModel.published earlierThan:chairResultModel.published]) {
-                uniqueChairs[chairResultModel.object.object.displayName] = (ChairModel*) chairResultModel;
-            }        }
-        else {
-            uniqueChairs[chairResultModel.object.object.displayName] = (ChairModel*) chairResultModel;
-        }
-    }
-
-    
-    ChairViewController *chairViewController = self.viewControllers[0];
-    [chairViewController setChairs:uniqueChairs];
+    FSMViewController *fsmViewController = self.viewControllers[0];
+    [fsmViewController setChairs:categorizedChairs[@"FSM"]];
+    BartViewController *bartViewController = self.viewControllers[1];
+    [bartViewController setChairs:categorizedChairs[@"BART"]];
 //    [self showChairStatus:requests];
+    
+    [fsmViewController.tableView reloadData];
+}
+
+/*
+ Return dictionary of chair status
+ FSM: {chairNumber: status}, ...
+ BART: {chairNumber: status}, ...
+ */
+- (NSDictionary *)categorizeChairs:(NSDictionary *)chairStatus{
+    NSMutableDictionary *categorizedChairs = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *fsmChairs = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *bartChairs = [[NSMutableDictionary alloc] init];
+    
+    for (NSString *name in chairStatus) {
+        NSNumber *number = [self getChairNumberFromString:name];
+        if ([[name uppercaseString] containsString:@"FSM"]) {
+            fsmChairs[number] = chairStatus[name][@"status"];
+        }
+        else if([[name uppercaseString] containsString:@"BART"]) {
+            bartChairs[number] = chairStatus[name][@"status"];
+        }
+    }
+    
+    categorizedChairs[@"FSM"] = fsmChairs;
+    categorizedChairs[@"BART"] = bartChairs;
+    
+    return categorizedChairs;
+}
+
+/*
+ Return array of chair status
+ chairName: {published: time, status: status},
+ */
+- (NSDictionary *)latestChairStatus:(NSArray *)allChairStatus {
+    NSMutableDictionary *latestChairStatus = [[NSMutableDictionary alloc] init];
+    for (NSDictionary *chair in allChairStatus) {
+        NSString *chairName = chair[@"name"];
+        NSDictionary *currentChairStatus = latestChairStatus[chairName];
+        BOOL replaceCurrentChairStatus = !currentChairStatus;
+        if (currentChairStatus) {
+            // Compare the published time
+            replaceCurrentChairStatus = [self compareDate:currentChairStatus[@"published"] earlierThan:chair[@"published"]];
+        }
+        
+        if (replaceCurrentChairStatus) {
+            latestChairStatus[chairName] = @{@"published": chair[@"published"], @"status": @([self getStatusFromVerb: chair[@"verb"]])};
+        }
+    }
+    return latestChairStatus;
+}
+
+- (NSNumber*) getChairNumberFromString:(NSString*)chairName {
+    
+    NSString *chairNumberStr = [[chairName componentsSeparatedByCharactersInSet:
+                            [[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
+                           componentsJoinedByString:@""];
+    return @([chairNumberStr intValue]);
+}
+
+- (ChairStatus) getStatusFromVerb:(NSString *)verb{
+    if ([verb isEqualToString:@"checkin"] || [verb isEqualToString:@"approve"]) {
+        return TAKEN;
+    }
+    else if ([verb isEqualToString:@"leave"] || [verb isEqualToString:@"deny"]) {
+        return AVAILABLE;
+    }
+    else {
+        return REQUESTED;
+    }
+}
+
+/*
+ Return array of chair status
+ [{name:chairName, published: time, verb: verb}, ...]
+*/
+- (NSArray *)retrieveAllChairStatus:(NSDictionary *)rawChairsData{
+    NSMutableArray *allChairStatus = [[NSMutableArray alloc] init];
+    for (NSDictionary *chairData in rawChairsData) {
+        NSString *verb = chairData[@"verb"];
+        if (verb && [self.allowedVerbs containsObject:verb]) {
+            NSString *publishedTime = chairData[@"published"];
+            NSString *chairName;
+            
+            if ([verb isEqualToString:@"checkin"] || [verb isEqualToString:@"leave"] || [verb isEqualToString:kVerbReqeust]) {
+                if (chairData[@"object"]) {
+                    chairName =chairData[@"object"][@"displayName"];
+                }
+            }
+            else if([verb isEqualToString:@"approve"] || [verb isEqualToString:@"deny"]) {
+                if (chairData[@"object"] && chairData[@"object"][@"object"]) {
+                    chairName =chairData[@"object"][@"object"][@"displayName"];
+                }
+            }
+            if (chairName && publishedTime && [[chairName lowercaseString] containsString:@"chair"]) {
+                [allChairStatus addObject:@{@"name": chairName, @"published": publishedTime, @"verb": verb}];
+            }
+        }
+    }
+    return allChairStatus;
 }
 
 - (NSDate*)stringToDate:(NSString*)string {
+    // Only the first 19 chars: 2015-05-03T01:34:15
     NSString *dateStr = [string substringToIndex:18];
-    // 2015-05-03T01:34:15.000Z
+    
     // Convert string to date object
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-//    [dateFormat setDateFormat:@"EE, d LLLL yyyy HH:mm:ss Z"];
-//    [dateFormat setDateFormat:@"yyyy-MM-d'T'HH:mm:ssZZZZZ"];
     [dateFormat setDateFormat:@"yyyy-MM-d'T'HH:mm:ss"];
     NSDate *date = [dateFormat dateFromString:dateStr];
     return date;
@@ -173,104 +226,6 @@ static NSString * const kObjectTypePlace = @"place";
     NSDate* date1 = [self stringToDate:dateStr1];
     NSDate* date2 = [self stringToDate:dateStr2];
     return [date1 compare:date2] == NSOrderedAscending;
-}
-
-- (ChairModel*)dictToChairModel:(NSDictionary*) data {
-    ChairModel *chairModel = [[ChairModel alloc] init];
-    
-    chairModel.verb = [data objectForKey:@"verb"];
-    if ([data objectForKey:@"actor"]) {
-        chairModel.actor = [self dictToActorModel:[data objectForKey:@"actor"]];
-    }
-    if ([data objectForKey:@"provider"]) {
-        chairModel.provider = [self dictToProviderModel:[data objectForKey:@"provider"]];
-    }
-    if ([data objectForKey:@"published"]) {
-        chairModel.published = [data objectForKey:@"published"];
-    }
-    if ([data objectForKey:@"reason"]) {
-        chairModel.reason = [data objectForKey:@"reason"];
-    }
-    
-    return chairModel;
-}
-
-- (ChairStatusModel*)dictToChairStatusModel:(NSDictionary*) data {
-    ChairStatusModel *chairModel = [[ChairStatusModel alloc] initWithChairModel:[self dictToChairModel:data]];
-    
-    if ([data objectForKey:@"object"]) {
-        chairModel.object = [self dictToObjectModel:[data objectForKey:@"object"]];
-    }
-    
-    return chairModel;
-}
-
-- (ChairResultModel*)dictToChairResultModel:(NSDictionary*) data {
-    ChairResultModel *chairModel = [[ChairResultModel alloc] initWithChairModel:[self dictToChairStatusModel:data]];
-    
-    if ([data objectForKey:@"object"]) {
-        chairModel.object = [self dictToChairStatusModel:[data objectForKey:@"object"]];
-    }
-    
-    return chairModel;
-}
-
-- (ObjectModel*)dictToObjectModel:(NSDictionary*) data {
-    ObjectModel *objectModel = [[ObjectModel alloc] init];
-
-    
-    if ([data objectForKey:@"address"]) {
-        objectModel.address = [self dictToAddressModel:[data objectForKey:@"address"]];
-    }
-    if ([data objectForKey:@"displayName"]) {
-        objectModel.displayName = [data objectForKey:@"displayName"];
-    }
-    if ([data objectForKey:@"descriptor-tags"]) {
-        objectModel.descriptorTags = [data objectForKey:@"descriptor-tags"];
-    }
-    if ([data objectForKey:@"objectType"]) {
-        objectModel.descriptorTags = [data objectForKey:@"objectType"];
-    }
-    return objectModel;
-}
-
-- (AddressModel*)dictToAddressModel:(NSDictionary*) data {
-    AddressModel *addressModel = [[AddressModel alloc] init];
-    if ([data objectForKey:@"locality"]) {
-        addressModel.locality = [data objectForKey:@"locality"];
-    }
-    if ([data objectForKey:@"region"]) {
-        addressModel.region = [data objectForKey:@"region"];
-    }
-    return addressModel;
-}
-
-- (ProviderModel*)dictToProviderModel:(NSDictionary*) data {
-    ProviderModel *providerModel = [[ProviderModel alloc] init];
-    if ([data objectForKey:@"displayName"]) {
-        providerModel.displayName = [data objectForKey:@"displayName"];
-    }
-    return providerModel;
-}
-
-- (ActorModel*)dictToActorModel:(NSDictionary*) data {
-    ActorModel *actorModel = [[ActorModel alloc] init];
-    if ([data objectForKey:@"displayName"]) {
-        actorModel.displayName = [data objectForKey:@"displayName"];
-    }
-    if ([data objectForKey:@"objectType"]) {
-        actorModel.displayName = [data objectForKey:@"objectType"];
-    }
-    if ([data objectForKey:@"device_id"]) {
-        actorModel.deviceId = [data objectForKey:@"device_id"];
-    }
-    if ([data objectForKey:@"system"]) {
-        actorModel.system = [data objectForKey:@"system"];
-    }
-    if ([data objectForKey:@"team"]) {
-        actorModel.team = [data objectForKey:@"team"];
-    }
-    return actorModel;
 }
 
 

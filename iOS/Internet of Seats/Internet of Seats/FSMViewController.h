@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MainViewController.h"
 
-@interface ChairViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
+@interface FSMViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) MainViewController *delegateController;
 @property (strong, nonatomic) NSDictionary *chairs;

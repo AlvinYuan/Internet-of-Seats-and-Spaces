@@ -10,7 +10,5 @@
 
 @interface MainViewController : UITabBarController
 
-@property (assign, nonatomic) int testV;
-
 @end
 
