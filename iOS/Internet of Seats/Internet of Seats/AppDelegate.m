@@ -43,6 +43,10 @@ static NSString * const kRegisterDevicePath = @"/register_device/";
      ntohl(tokenBytes[3]), ntohl(tokenBytes[4]), ntohl(tokenBytes[5]),
      ntohl(tokenBytes[6]), ntohl(tokenBytes[7])];
     
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setValue:iOSDeviceToken forKey:@"deviceId"];
+    [userDefaults synchronize];
+    
     [self sendDeviceToken:iOSDeviceToken];
     NSLog(@"Did Register for Remote Notifications with Device Token (%@)", deviceToken);
 }

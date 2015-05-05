@@ -16,7 +16,7 @@
 		B658446C1ABCC087007DD625 /* Internet_of_SeatsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B658446B1ABCC087007DD625 /* Internet_of_SeatsTests.m */; };
 		B68E0F561AF7688E002963C5 /* BartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F551AF7688E002963C5 /* BartViewController.m */; };
 		B68E0F5C1AF76C24002963C5 /* FSMViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F5B1AF76C24002963C5 /* FSMViewController.m */; };
-		B68E0F6D1AF85917002963C5 /* CircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F6C1AF85917002963C5 /* CircleView.m */; };
+		B68E0F701AF89153002963C5 /* CommonHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B68E0F6F1AF89153002963C5 /* CommonHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,8 +47,8 @@
 		B68E0F551AF7688E002963C5 /* BartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BartViewController.m; sourceTree = "<group>"; };
 		B68E0F5A1AF76C24002963C5 /* FSMViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSMViewController.h; sourceTree = "<group>"; };
 		B68E0F5B1AF76C24002963C5 /* FSMViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSMViewController.m; sourceTree = "<group>"; };
-		B68E0F6B1AF85917002963C5 /* CircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleView.h; sourceTree = "<group>"; };
-		B68E0F6C1AF85917002963C5 /* CircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleView.m; sourceTree = "<group>"; };
+		B68E0F6E1AF89153002963C5 /* CommonHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonHelper.h; sourceTree = "<group>"; };
+		B68E0F6F1AF89153002963C5 /* CommonHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,9 +98,9 @@
 				B68E0F5B1AF76C24002963C5 /* FSMViewController.m */,
 				B68E0F541AF7688E002963C5 /* BartViewController.h */,
 				B68E0F551AF7688E002963C5 /* BartViewController.m */,
+				B68E0F6E1AF89153002963C5 /* CommonHelper.h */,
+				B68E0F6F1AF89153002963C5 /* CommonHelper.m */,
 				B65844591ABCC087007DD625 /* Main.storyboard */,
-				B68E0F6B1AF85917002963C5 /* CircleView.h */,
-				B68E0F6C1AF85917002963C5 /* CircleView.m */,
 				B658445C1ABCC087007DD625 /* Images.xcassets */,
 				B658445E1ABCC087007DD625 /* LaunchScreen.xib */,
 				B658444F1ABCC087007DD625 /* Supporting Files */,
@@ -236,10 +236,10 @@
 			files = (
 				B65844581ABCC087007DD625 /* MainViewController.m in Sources */,
 				B68E0F5C1AF76C24002963C5 /* FSMViewController.m in Sources */,
-				B68E0F6D1AF85917002963C5 /* CircleView.m in Sources */,
 				B68E0F561AF7688E002963C5 /* BartViewController.m in Sources */,
 				B65844551ABCC087007DD625 /* AppDelegate.m in Sources */,
 				B65844521ABCC087007DD625 /* main.m in Sources */,
+				B68E0F701AF89153002963C5 /* CommonHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

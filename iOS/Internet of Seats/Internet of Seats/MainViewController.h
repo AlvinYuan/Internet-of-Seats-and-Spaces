@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+//typedef enum {
+//    AVAILABLE = 0,
+//    REQUESTED = 1,
+//    TAKEN = 2
+//} ChairStatus;
+
 @interface MainViewController : UITabBarController
 
 @end

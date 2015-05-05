@@ -9,9 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "MainViewController.h"
 
-@interface FSMViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
+@interface FSMViewController : UIViewController
 
-@property (weak, nonatomic) MainViewController *delegateController;
-@property (strong, nonatomic) NSDictionary *chairs;
+//@property (weak, nonatomic) MainViewController *delegateController;
+//@property (strong, nonatomic) NSDictionary *chairs;
+
+- (void)updateChairStatus;
 
 @end
