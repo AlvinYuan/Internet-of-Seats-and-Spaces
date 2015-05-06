@@ -55,11 +55,12 @@ NetTime_t timeExtract;
 char published[] = "\"2011-02-10T15:04:55Z\"";
 
 // Constants
+const int ledPin = A1;
 const int loadSensorThreshold = 900;
 const long minStateChangePeriod = 5000; // milliseconds
 
 // State
-FreeTakenState chairState = TAKEN;
+FreeTakenState chairState = FREE;
 long lastStateChangeMillis = 0;
 
 uint32_t activityStreamServerIp = 0;
@@ -67,12 +68,9 @@ uint32_t adafruitIp = 0; // for testing connection
 
 // Object Information
 const char *objectType = "\"place\"";
-const char *id = "\"http://example.org/berkeley/southhall/202/chair/1\"";
-char *displayName = "\"Chair at 202 South Hall, UC Berkeley\"";
-char *descriptor_tags = "[\"chair\",\"rolling\"]";
-char* latitude = "34.34";
-char* longitude = "-127.23";
-char* altitude = "100.05";
+const char *id = "\"http://example.org/fsm/chair/1\"";
+char *displayName = "\"Chair1 in FSM\"";
+char *descriptor_tags = "[\"chair\"]";
 char* locality = "Berkeley";
 char* region = "CA";
 
@@ -81,12 +79,16 @@ char contentLength[contentLengthMaxLength + 1];
 
 void setup() {
   Serial.begin(115200);
-
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+  
   Serial.println("Press the Start Button!");
   while (digitalRead(START_BUTTON_PIN) == LOW); // block until start button pressed
   if (USE_CC3000) {
     initializeConnection();
   }
+  
+  digitalWrite(ledPin, HIGH);
 }
 
 void loop() {
@@ -139,12 +141,6 @@ void postActivityToCC3000(char* actor, char* verb, char* published) {
       2 + 2 + 2 + strlen(id) +
       2 + 11 + 2 + strlen(displayName) +
       2 + 15 + 2 + strlen(descriptor_tags) +
-      2 + 8 + 2 +
-        1 +
-        1 + 8 + 2 + strlen(latitude) +
-        2 + 9 + 2 + strlen(longitude) +
-        2 + 8 + 2 + strlen(altitude) +
-        1 +
       2 + 7 + 2 +
         1 +
         1 + 8 + 2 + strlen(locality) +
@@ -175,12 +171,6 @@ void postActivityToCC3000(char* actor, char* verb, char* published) {
       www.fastrprint(F(",\"id\":")); www.fastrprint(id);
       www.fastrprint(F(",\"displayName\":")); www.fastrprint(displayName);
       www.fastrprint(F(",\"descriptor_tags\":")); www.fastrprint(descriptor_tags);
-      www.fastrprint(F(",\"position\":"));
-        www.fastrprint(F("{"));
-        www.fastrprint(F("\"latitude\":")); www.fastrprint(latitude);
-        www.fastrprint(F(",\"longitude\":")); www.fastrprint(longitude);
-        www.fastrprint(F(",\"altitude\":")); www.fastrprint(altitude);
-        www.fastrprint(F("}"));
       www.fastrprint(F(",\"address\":"));
         www.fastrprint(F("{"));
         www.fastrprint(F("\"locality\":")); www.fastrprint(locality);
@@ -220,12 +210,6 @@ void postActivityToSerial(char* actor, char* verb, char* published) {
     Serial.print(F(",\"id\":")); Serial.print(id);
     Serial.print(F(",\"displayName\":")); Serial.print(displayName);
     Serial.print(F(",\"descriptor_tags\":")); Serial.print(descriptor_tags);
-    Serial.print(F(",\"position\":"));
-      Serial.print(F("{"));
-      Serial.print(F("\"latitude\":")); Serial.print(latitude);
-      Serial.print(F(",\"longitude\":")); Serial.print(longitude);
-      Serial.print(F(",\"altitude\":")); Serial.print(altitude);
-      Serial.print(F("}"));
     Serial.print(F("}"));
   Serial.print(F(",\"published\":")); Serial.print(published);
   Serial.print(F("}"));
