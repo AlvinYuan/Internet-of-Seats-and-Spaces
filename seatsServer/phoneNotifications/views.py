@@ -126,6 +126,7 @@ def reservation_result(request):
 			# This device is already registered.
 			if device_system == 'iOS':
 				device = APNSDevice.objects.get(registration_id=device_id)
+				device.send_message("The seat reservation for " + seat + " is " + result)
 
 			else:
 				print 'try to match Android device'
@@ -144,7 +145,7 @@ def reservation_result(request):
 				# but for more complex nested collections the extras dict will be sent via
 				# the bulk message api.
 				
-			device.send_message(None, extra={"message": "The seat reservation for " + seat + " is " + result, "result": result})
+				device.send_message(None, extra={"message": "The seat reservation for " + seat + " is " + result, "result": result})
 			
 			print 'successfully sent push notification'
 			response_json['message'] = 'The server successfully sent push notification to devices.'
