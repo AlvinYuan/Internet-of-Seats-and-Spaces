@@ -13,19 +13,19 @@ provider = {"displayName":"BerkeleyChair"}
 subscriber_id = "BART Seating Reservation System"
 subscriber_url = "http://" + Site.objects.all()[0].domain + "/new_request_bart/"
 subscription_id = "BART Requests"
-subscription_actor_text = "BART" 
+subscription_actor_text = "BART"
 
 # Create your views here.
 @csrf_exempt
 def new_request_bart(request):
 	if request.method == "POST":
-		activity_json = json.loads(request.body) 
+		activity_json = json.loads(request.body)
 		print json.dumps(activity_json)
 
 		activity_response = activity_json
 		activity_response["object"]["objectType"] = "trainRecordWithSeatingInfo"
-		
-		activity_response["object"]["dataFields"]["car_1"]["available seats"] = 5 
+
+		activity_response["object"]["dataFields"]["car_1"]["availableSeats"] = 5
 
 		headers = {'Content-Type': 'application/stream+json'}
 		r = requests.post(ASBase_url + "/activities/", data=json.dumps(activity_response), headers=headers)
