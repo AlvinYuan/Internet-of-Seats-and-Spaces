@@ -24,5 +24,7 @@ static NSString * const kObjectTypePlace = @"place";
 
 + (NSDate*)stringToDate:(NSString*)string;
 + (NSString*)currentDateString;
++ (NSNumber*)chairNumberFromString:(NSString*)chairName;
++ (NSString*)statusFromVerb:(NSString *)verb;
 
 @end

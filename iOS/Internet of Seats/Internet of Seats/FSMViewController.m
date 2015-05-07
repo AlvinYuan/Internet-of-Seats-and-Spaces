@@ -156,7 +156,7 @@
         return [UIColor greenColor];
     }
     if ([status isEqualToString:@"REQUESTED"]) {
-        return [UIColor blueColor];
+        return [UIColor yellowColor];
     }
     if ([status isEqualToString:@"TAKEN"]) {
         return [UIColor redColor];

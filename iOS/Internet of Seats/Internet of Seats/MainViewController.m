@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 LaContra. All rights reserved.
 //
 
+#import "AppDelegate.h"
 #import "MainViewController.h"
 #import "FSMViewController.h"
 #import "BartViewController.h"
@@ -24,16 +25,19 @@ static NSString * const kChairStatusDownloaded = @"chairStatusDownloaded";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    delegate.tabBarController = self;
+    
     self.allowedVerbs = @[kVerbCheckin, kVerbLeave, kVerbReqeust, kVerbApprove, kVerbDeny];
     
     // Download initial chair status
     [self downloadInitialChairStatus];
-    
 }
 
 - (void)downloadInitialChairStatus {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults registerDefaults:@{kChairStatusDownloaded: @false}];
+    [userDefaults setBool:false forKey:kChairStatusDownloaded];
     [userDefaults synchronize];
     
     if(![userDefaults boolForKey:kChairStatusDownloaded]) {
@@ -58,7 +62,7 @@ static NSString * const kChairStatusDownloaded = @"chairStatusDownloaded";
                     [self processChairStatus: innerJson];
                     
                     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-                    [userDefaults setBool:true forKey:kChairStatusDownloaded];
+                    [userDefaults setBool:false forKey:kChairStatusDownloaded];
                     [userDefaults synchronize];
                     
                 } else {
@@ -99,7 +103,7 @@ static NSString * const kChairStatusDownloaded = @"chairStatusDownloaded";
     NSMutableDictionary *bartChairs = [[NSMutableDictionary alloc] init];
     
     for (NSString *name in chairStatus) {
-        NSNumber *number = [self getChairNumberFromString:name];
+        NSNumber *number = [CommonHelper chairNumberFromString:name];
         if ([[name uppercaseString] containsString:@"FSM"]) {
             fsmChairs[number] = chairStatus[name][@"status"];
         }
@@ -130,34 +134,10 @@ static NSString * const kChairStatusDownloaded = @"chairStatusDownloaded";
         }
         
         if (replaceCurrentChairStatus) {
-            latestChairStatus[chairName] = @{@"published": chair[@"published"], @"status": [self getStatusFromVerb: chair[@"verb"]]};
+            latestChairStatus[chairName] = @{@"published": chair[@"published"], @"status": [CommonHelper statusFromVerb: chair[@"verb"]]};
         }
     }
     return latestChairStatus;
-}
-
-- (NSNumber*) getChairNumberFromString:(NSString*)chairName {
-    
-    NSString *chairNumberStr = [[chairName componentsSeparatedByCharactersInSet:
-                            [[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
-                           componentsJoinedByString:@""];
-    return @([chairNumberStr intValue]);
-}
-
-- (NSString*) getStatusFromVerb:(NSString *)verb{
-//- (ChairStatus) getStatusFromVerb:(NSString *)verb{
-    if ([verb isEqualToString:@"checkin"] || [verb isEqualToString:@"approve"]) {
-//        return TAKEN;
-        return @"TAKEN";
-    }
-    else if ([verb isEqualToString:@"leave"] || [verb isEqualToString:@"deny"]) {
-//        return AVAILABLE;
-        return @"AVAILABLE";
-    }
-    else {
-//        return REQUESTED;
-        return @"REQUESTED";
-    }
 }
 
 /*

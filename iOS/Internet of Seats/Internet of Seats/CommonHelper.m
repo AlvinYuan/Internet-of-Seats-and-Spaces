@@ -29,5 +29,32 @@
     return dateStr;
 }
 
++ (NSNumber*)chairNumberFromString:(NSString*)chairName {
+    
+    NSString *chairNumberStr = [[chairName componentsSeparatedByCharactersInSet:
+                                 [[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
+
+    if ([chairNumberStr length] > 0) {
+        chairNumberStr = [chairNumberStr substringToIndex:1];
+        return @([chairNumberStr intValue]);
+    }
+    return @0;
+}
+
++ (NSString*)statusFromVerb:(NSString *)verb{
+    //- (ChairStatus) getStatusFromVerb:(NSString *)verb{
+    if ([verb isEqualToString:@"checkin"] || [verb isEqualToString:@"approve"]) {
+        //        return TAKEN;
+        return @"TAKEN";
+    }
+    else if ([verb isEqualToString:@"leave"] || [verb isEqualToString:@"deny"]) {
+        //        return AVAILABLE;
+        return @"AVAILABLE";
+    }
+    else {
+        //        return REQUESTED;
+        return @"REQUESTED";
+    }
+}
 
 @end

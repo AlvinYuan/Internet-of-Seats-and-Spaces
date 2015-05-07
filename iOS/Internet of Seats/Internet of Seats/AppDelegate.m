@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "FSMViewController.h"
+#import "CommonHelper.h"
 
 
 @interface AppDelegate ()
@@ -56,6 +58,44 @@ static NSString * const kRegisterDevicePath = @"/register_device/";
     NSLog(@"Did Fail to Register for Remote Notifications");
     NSLog(@"%@, %@", error, error.localizedDescription);
     
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    
+    NSDictionary *activity = [userInfo objectForKey:@"activity"];
+    if (activity) {
+        NSString *verb = [activity objectForKey:@"verb"];
+        NSDictionary *firstObject = [activity objectForKey:@"object"];
+        if (firstObject) {
+            NSDictionary *innerObject = [firstObject objectForKey:@"object"];
+            NSString *chairName;
+            if (innerObject) {
+                chairName = [innerObject objectForKey:@"displayName"];
+            }
+            else {
+                chairName = [firstObject objectForKey:@"displayName"];
+            }
+
+            if (chairName) {
+                NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+                NSData *serialized = [userDefaults objectForKey:@"FSM"];
+                
+                NSMutableDictionary *chairStatus = [NSKeyedUnarchiver unarchiveObjectWithData:serialized];
+                NSNumber *chairNumber = [CommonHelper chairNumberFromString:chairName];
+                NSString *status = [CommonHelper statusFromVerb:verb];
+                
+                chairStatus[chairNumber] = status;
+                
+                [userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:chairStatus] forKey:@"FSM"];
+                [userDefaults synchronize];
+                
+                UIViewController *viewController = self.tabBarController.viewControllers[0];
+                if ([viewController isKindOfClass:[FSMViewController class]]) {
+                    [(FSMViewController *)viewController updateChairStatus];
+                }
+            }
+        }
+    }
 }
 
 - (void)sendDeviceToken:(NSString *)deviceToken {
