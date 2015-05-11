@@ -2,6 +2,8 @@ import processing.serial.*;
 import java.net.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 // https://learn.sparkfun.com/tutorials/connecting-arduino-to-processing
 
@@ -23,10 +25,20 @@ void draw()
       return;
     }
     println(activityString);
-    postToASBase(activityString);
+    processActivityString(activityString);
   }
 }
 
+void processActivityString(String activityString) {
+    try {
+      JSONObject activityJSON = parseJSONObject(activityString);
+      activityJSON.setString("published", getTimeStamp());
+      postToASBase(activityJSON.toString());
+    } catch (Exception e) {
+      println(e.getMessage());
+      e.printStackTrace();
+    }
+}
 // http://stackoverflow.com/questions/4205980/java-sending-http-parameters-via-post-method-easily
 void postToASBase(String activityJsonString) {
   try {
@@ -57,5 +69,11 @@ void postToASBase(String activityJsonString) {
     println(e.getMessage());
     e.printStackTrace();
   }
+}
+
+String getTimeStamp() {
+  Calendar cal = Calendar.getInstance();
+  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+  return sdf.format(cal.getTime());
 }
 

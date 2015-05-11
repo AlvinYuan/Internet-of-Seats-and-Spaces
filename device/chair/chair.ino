@@ -71,8 +71,8 @@ const char *objectType = "\"place\"";
 const char *id = "\"http://example.org/fsm/chair/1\"";
 char *displayName = "\"Chair1 in FSM\"";
 char *descriptor_tags = "[\"chair\"]";
-char* locality = "Berkeley";
-char* region = "CA";
+char* locality = "\"Berkeley\"";
+char* region = "\"CA\"";
 
 const int contentLengthMaxLength = 3; // XXX: assume 3 digits is enough
 char contentLength[contentLengthMaxLength + 1]; 
@@ -120,9 +120,8 @@ void stateUpdate() {
       break;      
   }
 
-  updatePublishedString();
-
   if (USE_CC3000) {
+    updatePublishedString();
     postActivityToCC3000(actor, verb, published);
   } else {
     postActivityToSerial(actor, verb, published);
@@ -210,8 +209,13 @@ void postActivityToSerial(char* actor, char* verb, char* published) {
     Serial.print(F(",\"id\":")); Serial.print(id);
     Serial.print(F(",\"displayName\":")); Serial.print(displayName);
     Serial.print(F(",\"descriptor_tags\":")); Serial.print(descriptor_tags);
+    Serial.print(F(",\"address\":"));
+      Serial.print(F("{"));
+      Serial.print(F("\"locality\":")); Serial.print(locality);
+      Serial.print(F(",\"region\":")); Serial.print(region);
+      Serial.print(F("}"));
     Serial.print(F("}"));
-  Serial.print(F(",\"published\":")); Serial.print(published);
+  Serial.print(F(",\"provider\":{\"displayName\":\"BerkeleyChair\"}"));
   Serial.print(F("}"));
   Serial.println();
 }
